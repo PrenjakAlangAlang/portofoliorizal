@@ -367,11 +367,12 @@ export default function AdminProfilePage() {
 
             <div className="space-y-1.5">
               <label className="block text-xs font-semibold text-on-surface">
-                Sorotan Sertifikasi (Hero Badge)
+                Nilai IPK (Indeks Prestasi Kumulatif)
               </label>
               <input
                 type="text"
                 name="certification_badge"
+                placeholder="Contoh: 3.75 / 4.00 atau 3.80"
                 value={profile.certification_badge}
                 onChange={handleChange}
                 className="w-full px-3.5 py-2 rounded-lg border border-outline-variant/60 bg-surface text-xs sm:text-sm focus:outline-hidden focus:border-primary focus:ring-2 focus:ring-primary/20"

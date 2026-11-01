@@ -67,9 +67,10 @@ export default function HeroSection({ profile }: HeroSectionProps) {
               </span>
             </div>
             <div className="flex items-center gap-2.5 p-2 rounded-lg bg-surface-container-low/50">
-              <span className="material-symbols-outlined text-primary text-xl">verified</span>
+              <span className="material-symbols-outlined text-primary text-xl">workspace_premium</span>
               <span>
-                <strong className="text-on-surface">{t.certificationLabel}</strong> {locProfile.certification_badge}
+                <strong className="text-on-surface">{t.certificationLabel}</strong>{' '}
+                {locProfile.certification_badge || '-'}
               </span>
             </div>
           </div>

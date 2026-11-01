@@ -42,7 +42,9 @@ export default function Header({ profile }: HeaderProps) {
             </span>
             <span className="text-[11px] font-mono text-on-surface-variant flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
-              {t.roleSubtitle}
+              {locProfile.certification_badge
+                ? `${t.roleSubtitle} ${locProfile.certification_badge}`
+                : t.roleSubtitle}
             </span>
           </div>
         </Link>
