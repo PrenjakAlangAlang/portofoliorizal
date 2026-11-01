@@ -4,21 +4,18 @@ import { LanguageProvider } from '@/context/LanguageContext';
 import { ThemeProvider } from '@/context/ThemeContext';
 
 export const metadata: Metadata = {
-  title: 'Portofolio',
+  title: 'Novrijal Ramadhany | Geological Engineering',
   description:
-    'Portofolio Profesional Geologi Eksplorasi, Pemetaan Hidrotermal, Analisis Sedimentologi, dan Pemodelan Spasial 3D Indonesia.',
+    'Portofolio Profesional Geologi Eksplorasi, Pemetaan Hidrotermal, Analisis Sedimentologi, dan Pemodelan Spasial 3D - Novrijal Ramadhany, S.T.',
   keywords: [
+    'Novrijal Ramadhany',
     'Geologist',
+    'Geological Engineering',
+    'Teknik Geologi',
     'Geologi Eksplorasi',
-    'Ratna Sari',
-    'Leapfrog 3D',
-    'ArcGIS Pro',
-    'IAGI',
+    'UPN Veteran Yogyakarta',
     'Indonesia',
   ],
-  icons: {
-    icon: '/favicon.ico',
-  },
 };
 
 export default function RootLayout({
