@@ -5,7 +5,11 @@ import { Certification } from '@/lib/types';
 
 export default function AdminCertificationsPage() {
   const currentYear = new Date().getFullYear();
-  const yearOptions = Array.from({ length: currentYear + 2 - 1990 }, (_, i) => (currentYear + 1 - i).toString());
+  // Rentang tahun dari 10 tahun ke depan hingga tahun 1980
+  const yearOptions = Array.from(
+    { length: currentYear + 10 - 1980 + 1 },
+    (_, i) => (currentYear + 10 - i).toString()
+  );
 
   const [certifications, setCertifications] = useState<Certification[]>([]);
   const [loading, setLoading] = useState(true);
