@@ -107,8 +107,29 @@ export async function getExperiences(): Promise<Experience[]> {
         .select('*')
         .order('order_index', { ascending: true });
 
-      if (!error && data && data.length > 0) {
-        return data as Experience[];
+      if (!error && data) {
+        if (data.length === 0 && initialExperiences.length > 0) {
+          const client = getAdminSupabase();
+          if (client) {
+            const sanitized = initialExperiences.map((e) => ({
+              id: e.id,
+              title: e.title,
+              company: e.company,
+              location: e.location,
+              period: e.period,
+              description: e.description,
+              tags: e.tags,
+              order_index: e.order_index,
+            }));
+            const { data: seeded } = await client.from('experiences').upsert(sanitized).select();
+            if (seeded && seeded.length > 0) {
+              memoryExperiences = seeded as Experience[];
+              return memoryExperiences;
+            }
+          }
+        }
+        memoryExperiences = data as Experience[];
+        return memoryExperiences;
       }
     } catch (e) {
       console.warn('Error fetching experiences from Supabase:', e);
@@ -118,21 +139,31 @@ export async function getExperiences(): Promise<Experience[]> {
 }
 
 export async function saveExperience(item: Experience): Promise<Experience> {
+  const allowedKeys = ['id', 'title', 'company', 'location', 'period', 'description', 'tags', 'order_index'];
+  const dbPayload: Record<string, unknown> = {};
+  const record = item as unknown as Record<string, unknown>;
+  for (const k of allowedKeys) {
+    if (record[k] !== undefined) dbPayload[k] = record[k];
+  }
+
   if (isSupabaseConfigured()) {
     const client = getAdminSupabase();
     if (client) {
       try {
         const { data, error } = await client
           .from('experiences')
-          .upsert(item)
+          .upsert(dbPayload)
           .select()
           .single();
 
-        if (!error && data) {
+        if (error) {
+          console.error('Error saving experience to Supabase:', error);
+        } else if (data) {
+          const saved = data as Experience;
           const idx = memoryExperiences.findIndex((e) => e.id === item.id);
-          if (idx >= 0) memoryExperiences[idx] = data as Experience;
-          else memoryExperiences.push(data as Experience);
-          return data as Experience;
+          if (idx >= 0) memoryExperiences[idx] = saved;
+          else memoryExperiences.push(saved);
+          return saved;
         }
       } catch (e) {
         console.warn('Error saving experience to Supabase:', e);
@@ -173,8 +204,31 @@ export async function getProjects(): Promise<Project[]> {
         .select('*')
         .order('order_index', { ascending: true });
 
-      if (!error && data && data.length > 0) {
-        return data as Project[];
+      if (!error && data) {
+        if (data.length === 0 && initialProjects.length > 0) {
+          const client = getAdminSupabase();
+          if (client) {
+            const sanitized = initialProjects.map((p) => ({
+              id: p.id,
+              title: p.title,
+              location: p.location,
+              duration: p.duration,
+              description: p.description,
+              deliverable: p.deliverable,
+              deliverable_color: p.deliverable_color,
+              tags: p.tags,
+              image_url: p.image_url,
+              order_index: p.order_index,
+            }));
+            const { data: seeded } = await client.from('projects').upsert(sanitized).select();
+            if (seeded && seeded.length > 0) {
+              memoryProjects = seeded as Project[];
+              return memoryProjects;
+            }
+          }
+        }
+        memoryProjects = data as Project[];
+        return memoryProjects;
       }
     } catch (e) {
       console.warn('Error fetching projects from Supabase:', e);
@@ -184,21 +238,34 @@ export async function getProjects(): Promise<Project[]> {
 }
 
 export async function saveProject(item: Project): Promise<Project> {
+  const allowedKeys = [
+    'id', 'title', 'location', 'duration', 'description',
+    'deliverable', 'deliverable_color', 'tags', 'image_url', 'order_index'
+  ];
+  const dbPayload: Record<string, unknown> = {};
+  const record = item as unknown as Record<string, unknown>;
+  for (const k of allowedKeys) {
+    if (record[k] !== undefined) dbPayload[k] = record[k];
+  }
+
   if (isSupabaseConfigured()) {
     const client = getAdminSupabase();
     if (client) {
       try {
         const { data, error } = await client
           .from('projects')
-          .upsert(item)
+          .upsert(dbPayload)
           .select()
           .single();
 
-        if (!error && data) {
+        if (error) {
+          console.error('Error saving project to Supabase:', error);
+        } else if (data) {
+          const saved = data as Project;
           const idx = memoryProjects.findIndex((p) => p.id === item.id);
-          if (idx >= 0) memoryProjects[idx] = data as Project;
-          else memoryProjects.push(data as Project);
-          return data as Project;
+          if (idx >= 0) memoryProjects[idx] = saved;
+          else memoryProjects.push(saved);
+          return saved;
         }
       } catch (e) {
         console.warn('Error saving project to Supabase:', e);
@@ -239,8 +306,28 @@ export async function getCertifications(): Promise<Certification[]> {
         .select('*')
         .order('order_index', { ascending: true });
 
-      if (!error && data && data.length > 0) {
-        return data as Certification[];
+      if (!error && data) {
+        if (data.length === 0 && initialCertifications.length > 0) {
+          const client = getAdminSupabase();
+          if (client) {
+            const sanitized = initialCertifications.map((c) => ({
+              id: c.id,
+              title: c.title,
+              issuer: c.issuer,
+              year: c.year,
+              description: c.description,
+              credential_url: c.credential_url,
+              order_index: c.order_index,
+            }));
+            const { data: seeded } = await client.from('certifications').upsert(sanitized).select();
+            if (seeded && seeded.length > 0) {
+              memoryCertifications = seeded as Certification[];
+              return memoryCertifications;
+            }
+          }
+        }
+        memoryCertifications = data as Certification[];
+        return memoryCertifications;
       }
     } catch (e) {
       console.warn('Error fetching certifications from Supabase:', e);
@@ -250,21 +337,31 @@ export async function getCertifications(): Promise<Certification[]> {
 }
 
 export async function saveCertification(item: Certification): Promise<Certification> {
+  const allowedKeys = ['id', 'title', 'issuer', 'year', 'description', 'credential_url', 'order_index'];
+  const dbPayload: Record<string, unknown> = {};
+  const record = item as unknown as Record<string, unknown>;
+  for (const k of allowedKeys) {
+    if (record[k] !== undefined) dbPayload[k] = record[k];
+  }
+
   if (isSupabaseConfigured()) {
     const client = getAdminSupabase();
     if (client) {
       try {
         const { data, error } = await client
           .from('certifications')
-          .upsert(item)
+          .upsert(dbPayload)
           .select()
           .single();
 
-        if (!error && data) {
+        if (error) {
+          console.error('Error saving certification to Supabase:', error);
+        } else if (data) {
+          const saved = data as Certification;
           const idx = memoryCertifications.findIndex((c) => c.id === item.id);
-          if (idx >= 0) memoryCertifications[idx] = data as Certification;
-          else memoryCertifications.push(data as Certification);
-          return data as Certification;
+          if (idx >= 0) memoryCertifications[idx] = saved;
+          else memoryCertifications.push(saved);
+          return saved;
         }
       } catch (e) {
         console.warn('Error saving certification to Supabase:', e);
@@ -305,8 +402,26 @@ export async function getSkills(): Promise<SkillCategory[]> {
         .select('*')
         .order('order_index', { ascending: true });
 
-      if (!error && data && data.length > 0) {
-        return data as SkillCategory[];
+      if (!error && data) {
+        if (data.length === 0 && initialSkills.length > 0) {
+          const client = getAdminSupabase();
+          if (client) {
+            const sanitized = initialSkills.map((s) => ({
+              id: s.id,
+              category: s.category,
+              icon_name: s.icon_name || 'terrain',
+              items: s.items,
+              order_index: s.order_index,
+            }));
+            const { data: seeded } = await client.from('skills').upsert(sanitized).select();
+            if (seeded && seeded.length > 0) {
+              memorySkills = seeded as SkillCategory[];
+              return memorySkills;
+            }
+          }
+        }
+        memorySkills = data as SkillCategory[];
+        return memorySkills;
       }
     } catch (e) {
       console.warn('Error fetching skills from Supabase:', e);
@@ -316,21 +431,31 @@ export async function getSkills(): Promise<SkillCategory[]> {
 }
 
 export async function saveSkillCategory(item: SkillCategory): Promise<SkillCategory> {
+  const allowedKeys = ['id', 'category', 'icon_name', 'items', 'order_index'];
+  const dbPayload: Record<string, unknown> = {};
+  const record = item as unknown as Record<string, unknown>;
+  for (const k of allowedKeys) {
+    if (record[k] !== undefined) dbPayload[k] = record[k];
+  }
+
   if (isSupabaseConfigured()) {
     const client = getAdminSupabase();
     if (client) {
       try {
         const { data, error } = await client
           .from('skills')
-          .upsert(item)
+          .upsert(dbPayload)
           .select()
           .single();
 
-        if (!error && data) {
+        if (error) {
+          console.error('Error saving skill category to Supabase:', error);
+        } else if (data) {
+          const saved = data as SkillCategory;
           const idx = memorySkills.findIndex((s) => s.id === item.id);
-          if (idx >= 0) memorySkills[idx] = data as SkillCategory;
-          else memorySkills.push(data as SkillCategory);
-          return data as SkillCategory;
+          if (idx >= 0) memorySkills[idx] = saved;
+          else memorySkills.push(saved);
+          return saved;
         }
       } catch (e) {
         console.warn('Error saving skill category to Supabase:', e);
