@@ -190,7 +190,7 @@ export default function AdminCertificationsPage() {
 
             <div className="space-y-1.5">
               <label className="block text-xs font-semibold text-on-surface">
-                Keterangan Singkat Kompetensi (Bahasa Indonesia)
+                Keterangan Singkat Kompetensi
               </label>
               <textarea
                 rows={3}
@@ -198,21 +198,6 @@ export default function AdminCertificationsPage() {
                 value={editingItem.description || ''}
                 onChange={(e) =>
                   setEditingItem({ ...editingItem, description: e.target.value })
-                }
-                className="w-full px-3.5 py-2 rounded-lg border border-outline-variant/60 bg-surface text-xs sm:text-sm focus:outline-hidden focus:border-primary"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-on-surface">
-                Keterangan Singkat (English - Opsional)
-              </label>
-              <textarea
-                rows={2}
-                placeholder="Kosongkan jika ingin diterjemahkan otomatis saat tombol EN diklik..."
-                value={editingItem.description_en || ''}
-                onChange={(e) =>
-                  setEditingItem({ ...editingItem, description_en: e.target.value })
                 }
                 className="w-full px-3.5 py-2 rounded-lg border border-outline-variant/60 bg-surface text-xs sm:text-sm focus:outline-hidden focus:border-primary"
               />

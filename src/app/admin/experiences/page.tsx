@@ -231,7 +231,7 @@ export default function AdminExperiencesPage() {
 
             <div className="space-y-1.5">
               <label className="block text-xs font-semibold text-on-surface">
-                Uraian Tanggung Jawab &amp; Prestasi (Bahasa Indonesia)
+                Uraian Tanggung Jawab &amp; Prestasi
               </label>
               <textarea
                 rows={3}
@@ -239,21 +239,6 @@ export default function AdminExperiencesPage() {
                 value={editingItem.description || ''}
                 onChange={(e) =>
                   setEditingItem({ ...editingItem, description: e.target.value })
-                }
-                className="w-full px-3.5 py-2 rounded-lg border border-outline-variant/60 bg-surface text-xs sm:text-sm focus:outline-hidden focus:border-primary"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-on-surface">
-                Uraian Tanggung Jawab (English - Opsional)
-              </label>
-              <textarea
-                rows={2}
-                placeholder="Kosongkan jika ingin diterjemahkan otomatis saat tombol EN diklik..."
-                value={editingItem.description_en || ''}
-                onChange={(e) =>
-                  setEditingItem({ ...editingItem, description_en: e.target.value })
                 }
                 className="w-full px-3.5 py-2 rounded-lg border border-outline-variant/60 bg-surface text-xs sm:text-sm focus:outline-hidden focus:border-primary"
               />
