@@ -62,14 +62,30 @@ export async function updateProfile(updated: Partial<Profile>): Promise<Profile>
     const client = getAdminSupabase();
     if (client) {
       try {
+        const allowedKeys = [
+          'id', 'name', 'title', 'status_badge', 'bio', 'education',
+          'university', 'location', 'certification_badge', 'iagi_number',
+          'avatar_url', 'cv_url', 'quote', 'datum_info', 'email', 'phone',
+          'linkedin_url', 'researchgate_url', 'github_url', 'updated_at'
+        ];
+        const dbPayload: Record<string, unknown> = { id: 'profile-main' };
+        const mergedRecord = merged as unknown as Record<string, unknown>;
+        for (const key of allowedKeys) {
+          if (mergedRecord[key] !== undefined) {
+            dbPayload[key] = mergedRecord[key];
+          }
+        }
+
         const { data, error } = await client
           .from('profiles')
-          .upsert({ ...merged, id: 'profile-main' })
+          .upsert(dbPayload)
           .select()
           .single();
 
-        if (!error && data) {
-          memoryProfile = data as Profile;
+        if (error) {
+          console.error('Supabase updateProfile error:', error);
+        } else if (data) {
+          memoryProfile = { ...merged, ...(data as Profile) };
           return memoryProfile;
         }
       } catch (e) {

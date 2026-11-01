@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { isAuthenticated } from '@/lib/auth';
 import { getProfile, updateProfile } from '@/lib/data-store';
 
@@ -17,6 +18,7 @@ export async function PUT(request: Request) {
   try {
     const body = await request.json();
     const updated = await updateProfile(body);
+    revalidatePath('/');
     return NextResponse.json({ success: true, data: updated });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Failed to update profile';

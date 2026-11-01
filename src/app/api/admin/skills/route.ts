@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { isAuthenticated } from '@/lib/auth';
 import { getSkills, saveSkillCategory, deleteSkillCategory } from '@/lib/data-store';
 
@@ -20,6 +21,7 @@ export async function POST(request: Request) {
       item.id = `skill-${Date.now()}`;
     }
     const saved = await saveSkillCategory(item);
+    revalidatePath('/');
     return NextResponse.json({ success: true, data: saved });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Failed to save skill category';
@@ -37,6 +39,7 @@ export async function DELETE(request: Request) {
     if (!id) return NextResponse.json({ error: 'Missing ID' }, { status: 400 });
 
     await deleteSkillCategory(id);
+    revalidatePath('/');
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Failed to delete skill category';

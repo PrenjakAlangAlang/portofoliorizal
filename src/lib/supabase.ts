@@ -15,14 +15,24 @@ export const isSupabaseConfigured = (): boolean => {
   );
 };
 
-// Client for public reads and user submissions
+// Client for public reads and user submissions with cache: no-store to prevent stale cache in Next.js
 export const supabase = isSupabaseConfigured()
-  ? createClient(supabaseUrl, supabaseAnonKey)
+  ? createClient(supabaseUrl, supabaseAnonKey, {
+      auth: { persistSession: false },
+      global: {
+        fetch: (url, options) => fetch(url, { ...options, cache: 'no-store' }),
+      },
+    })
   : null;
 
 // Server-side admin client with service role key if available, otherwise anon key
 export const getAdminSupabase = () => {
   if (!isSupabaseConfigured()) return null;
   const key = supabaseServiceRoleKey || supabaseAnonKey;
-  return createClient(supabaseUrl, key);
+  return createClient(supabaseUrl, key, {
+    auth: { persistSession: false },
+    global: {
+      fetch: (url, options) => fetch(url, { ...options, cache: 'no-store' }),
+    },
+  });
 };

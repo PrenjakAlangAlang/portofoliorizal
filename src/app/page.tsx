@@ -15,6 +15,10 @@ import {
   getSkills,
 } from '@/lib/data-store';
 
+// Force dynamic rendering so edits in admin dashboard reflect immediately on the live website
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function HomePage() {
   const [profile, experiences, projects, certifications, skills] = await Promise.all([
     getProfile(),

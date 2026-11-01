@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { isAuthenticated } from '@/lib/auth';
 import { getCertifications, saveCertification, deleteCertification } from '@/lib/data-store';
 
@@ -20,6 +21,7 @@ export async function POST(request: Request) {
       item.id = `cert-${Date.now()}`;
     }
     const saved = await saveCertification(item);
+    revalidatePath('/');
     return NextResponse.json({ success: true, data: saved });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Failed to save certification';
@@ -37,6 +39,7 @@ export async function DELETE(request: Request) {
     if (!id) return NextResponse.json({ error: 'Missing ID' }, { status: 400 });
 
     await deleteCertification(id);
+    revalidatePath('/');
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Failed to delete certification';
