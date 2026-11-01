@@ -1,5 +1,5 @@
 import { Language } from '@/context/LanguageContext';
-import { Profile, Experience, Project, Certification, SkillCategory } from './types';
+import { Profile, Experience, Project, Certification, SkillCategory, Highlight } from './types';
 import { defaultDictionaryEN } from './translations-dictionary';
 
 // Static UI Dictionaries (Navigation, static buttons, fixed labels)
@@ -10,6 +10,7 @@ export const uiStrings = {
       experience: 'Pengalaman',
       projects: 'Proyek',
       certifications: 'Pelatihan & Sertifikasi',
+      highlights: 'Pencapaian',
       skills: 'Keahlian',
       contact: 'Kontak',
       downloadCv: 'Unduh CV',
@@ -31,11 +32,16 @@ export const uiStrings = {
       sectionTitle: 'Portofolio Proyek',
       badge: 'Pilihan Utama',
       deliverableLabel: 'Deliverable',
+      viewProject: 'Lihat Proyek',
     },
     certifications: {
       sectionTitle: 'Sertifikasi & Pelatihan',
       badge: 'Terverifikasi',
       viewCredential: 'Lihat Kredensial',
+    },
+    highlights: {
+      sectionTitle: 'Pencapaian & Sorotan',
+      badge: 'Metrik Eksplorasi',
     },
     skills: {
       sectionTitle: 'Keahlian Teknis',
@@ -78,6 +84,7 @@ export const uiStrings = {
       experience: 'Experience',
       projects: 'Projects',
       certifications: 'Certifications',
+      highlights: 'Highlights',
       skills: 'Skills',
       contact: 'Contact',
       downloadCv: 'Download CV',
@@ -99,11 +106,16 @@ export const uiStrings = {
       sectionTitle: 'Project Portfolio',
       badge: 'Key Field Projects',
       deliverableLabel: 'Deliverable',
+      viewProject: 'View Project',
     },
     certifications: {
       sectionTitle: 'Certifications & Training',
       badge: 'Verified Credentials',
       viewCredential: 'View Credential',
+    },
+    highlights: {
+      sectionTitle: 'Achievements & Highlights',
+      badge: 'Exploration & Academic Metrics',
     },
     skills: {
       sectionTitle: 'Technical Competencies',
@@ -241,4 +253,21 @@ export function getLocalizedSkills(
     }));
   }
   return skills;
+}
+
+// Localize Highlights: strictly follows the database record.
+export function getLocalizedHighlights(
+  highlights: Highlight[],
+  lang: Language,
+  dict: Record<string, string> = {}
+): Highlight[] {
+  if (lang === 'en') {
+    return highlights.map((hl) => ({
+      ...hl,
+      value: hl.value,
+      label: translateText(hl.label, dict),
+      description: translateText(hl.description, dict),
+    }));
+  }
+  return highlights;
 }

@@ -1,4 +1,4 @@
-import { Profile, Experience, Project, Certification, SkillCategory, ContactMessage } from './types';
+import { Profile, Experience, Project, Certification, SkillCategory, ContactMessage, Highlight } from './types';
 
 export const initialProfile: Profile = {
   id: 'profile-main',
@@ -63,6 +63,8 @@ export const initialProjects: Project[] = [
     deliverable_color: 'primary',
     tags: ['Eksplorasi Porfiri', 'Singkapan', 'Sampling'],
     image_url: 'https://images.unsplash.com/photo-1518384401463-d3876163c195?auto=format&fit=crop&w=1200&q=80',
+    document_url: 'https://kdokmvnpixzcwmslpsee.supabase.co/storage/v1/object/public/portfolio/1793524292032_CV_Novrijal_Ramadhany.pdf',
+    document_name: 'Paparan_Eksplorasi_Porfiri.pdf',
     order_index: 0
   },
   {
@@ -158,6 +160,65 @@ export const initialCertifications: Certification[] = [
     credential_url: '#',
     order_index: 5
   }
+];
+
+export const initialHighlights: Highlight[] = [
+  {
+    id: 'hl-1',
+    value: '3.50 / 4.00',
+    label: 'IPK Kelulusan S1',
+    description: 'Teknik Geologi UPN "Veteran" Yogyakarta',
+    order_index: 0,
+  },
+  {
+    id: 'hl-2',
+    value: '30+ Mahasiswa',
+    label: 'Asisten Praktikum',
+    description: 'Laboratorium Geologi & Pemetaan Lapangan',
+    order_index: 1,
+  },
+  {
+    id: 'hl-3',
+    value: '10+ Titik Pemboran',
+    label: 'Core Logging & Supervisi',
+    description: 'Supervisi Pemboran Inti Batubara & Mineral',
+    order_index: 2,
+  },
+  {
+    id: 'hl-4',
+    value: '25+ Peta Geologi',
+    label: 'Pemetaan & SIG Spasial',
+    description: 'Dihasilkan Menggunakan ArcGIS & Global Mapper',
+    order_index: 3,
+  },
+  {
+    id: 'hl-5',
+    value: '390+ Mt',
+    label: 'Estimasi Sumber Daya Batubara',
+    description: 'Korelasi Seam & Pemodelan MineScape',
+    order_index: 4,
+  },
+  {
+    id: 'hl-6',
+    value: '12.6 Juta m³',
+    label: 'Estimasi Volume Overburden',
+    description: 'Perhitungan Cadangan & Cut-and-Fill Tambang',
+    order_index: 5,
+  },
+  {
+    id: 'hl-7',
+    value: '9 km²',
+    label: 'Luas Area Pemetaan',
+    description: 'Pemetaan Singkapan & Analisis Struktur Geologi',
+    order_index: 6,
+  },
+  {
+    id: 'hl-8',
+    value: '450+ Titik Pengamatan',
+    label: 'Pengukuran Strike & Dip',
+    description: 'Analisis Sesar, Kekar & Orientasi Lapisan Singkapan',
+    order_index: 7,
+  },
 ];
 
 export const initialSkills: SkillCategory[] = [

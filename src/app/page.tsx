@@ -4,6 +4,7 @@ import HeroSection from '@/components/HeroSection';
 import ExperienceSection from '@/components/ExperienceSection';
 import ProjectsSection from '@/components/ProjectsSection';
 import CertificationsSection from '@/components/CertificationsSection';
+import HighlightsSection from '@/components/HighlightsSection';
 import SkillsSection from '@/components/SkillsSection';
 import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
@@ -12,6 +13,7 @@ import {
   getExperiences,
   getProjects,
   getCertifications,
+  getHighlights,
   getSkills,
 } from '@/lib/data-store';
 
@@ -20,11 +22,12 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function HomePage() {
-  const [profile, experiences, projects, certifications, skills] = await Promise.all([
+  const [profile, experiences, projects, certifications, highlights, skills] = await Promise.all([
     getProfile(),
     getExperiences(),
     getProjects(),
     getCertifications(),
+    getHighlights(),
     getSkills(),
   ]);
 
@@ -38,6 +41,7 @@ export default async function HomePage() {
           <ExperienceSection experiences={experiences} />
           <ProjectsSection projects={projects} />
           <CertificationsSection certifications={certifications} />
+          <HighlightsSection highlights={highlights} />
           <SkillsSection skills={skills} />
           <ContactSection profile={profile} />
         </div>

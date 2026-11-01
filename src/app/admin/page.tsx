@@ -5,16 +5,18 @@ import {
   getExperiences,
   getProjects,
   getCertifications,
+  getHighlights,
   getSkills,
   getContactMessages,
 } from '@/lib/data-store';
 
 export default async function AdminDashboardPage() {
-  const [profile, experiences, projects, certifications, skills, messages] = await Promise.all([
+  const [profile, experiences, projects, certifications, highlights, skills, messages] = await Promise.all([
     getProfile(),
     getExperiences(),
     getProjects(),
     getCertifications(),
+    getHighlights(),
     getSkills(),
     getContactMessages(),
   ]);
@@ -42,6 +44,13 @@ export default async function AdminDashboardPage() {
       icon: 'workspace_premium',
       href: '/admin/certifications',
       color: 'bg-tertiary/10 text-tertiary',
+    },
+    {
+      label: 'Pencapaian & Sorotan',
+      count: highlights.length,
+      icon: 'insights',
+      href: '/admin/highlights',
+      color: 'bg-primary/10 text-primary',
     },
     {
       label: 'Kategori Keahlian',

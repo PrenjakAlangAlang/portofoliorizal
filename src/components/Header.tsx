@@ -24,6 +24,7 @@ export default function Header({ profile }: HeaderProps) {
     { href: '#pengalaman', label: t.experience },
     { href: '#proyek', label: t.projects },
     { href: '#pelatihan', label: t.certifications },
+    { href: '#sorotan', label: t.highlights },
     { href: '#keahlian', label: t.skills },
     { href: '#kontak', label: t.contact },
   ];

@@ -59,6 +59,8 @@ export interface Project {
   deliverable_color?: 'primary' | 'secondary' | 'tertiary' | 'error';
   tags?: string[];
   image_url: string;
+  document_url?: string;
+  document_name?: string;
   order_index: number;
 }
 
@@ -71,6 +73,14 @@ export interface Certification {
   description: string;
   description_en?: string;
   credential_url?: string;
+  order_index: number;
+}
+
+export interface Highlight {
+  id: string;
+  value: string;
+  label: string;
+  description: string;
   order_index: number;
 }
 

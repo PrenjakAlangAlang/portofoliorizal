@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Project } from '@/lib/types';
 import { useLanguage } from '@/context/LanguageContext';
 import { uiStrings, getLocalizedProjects } from '@/lib/translations';
 import ScrollReveal from './ScrollReveal';
+import ProjectPresentationModal from './ProjectPresentationModal';
 
 interface ProjectsSectionProps {
   projects: Project[];
@@ -28,6 +29,7 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
 
   const locProjects = getLocalizedProjects(projects, lang, translations);
   const t = uiStrings[lang].projects;
+  const [activePresentationProject, setActivePresentationProject] = useState<Project | null>(null);
 
   const getDeliverableColorClass = (color?: string) => {
     switch (color) {
@@ -124,12 +126,32 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
                     <span className="material-symbols-outlined text-sm">task_alt</span>
                     <span className="truncate">{t.deliverableLabel}: {proj.deliverable}</span>
                   </div>
+
+                  {/* Tombol Lihat Proyek (bergaya seperti Lihat Kredensial) */}
+                  <div className="pt-2 border-t border-surface-container-high/40">
+                    <button
+                      type="button"
+                      onClick={() => setActivePresentationProject(proj)}
+                      className="inline-flex items-center gap-1 text-[11px] font-mono text-primary hover:underline cursor-pointer group/link"
+                    >
+                      <span>{t.viewProject || 'Lihat Proyek'}</span>
+                      <span className="material-symbols-outlined text-xs transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5">
+                        arrow_outward
+                      </span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           </ScrollReveal>
         ))}
       </div>
+
+      {/* Modal Paparan / Slide Viewer Proyek */}
+      <ProjectPresentationModal
+        project={activePresentationProject}
+        onClose={() => setActivePresentationProject(null)}
+      />
     </section>
   );
 }

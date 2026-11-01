@@ -7,6 +7,7 @@ import {
   SkillCategory,
   ContactMessage,
   AdminCredentials,
+  Highlight,
 } from './types';
 import {
   initialProfile,
@@ -14,7 +15,8 @@ import {
   initialProjects,
   initialCertifications,
   initialSkills,
-  initialMessages
+  initialMessages,
+  initialHighlights,
 } from './initial-data';
 
 // In-memory memory fallback store when Supabase is not connected
@@ -23,6 +25,7 @@ let memoryExperiences: Experience[] = [...initialExperiences];
 let memoryProjects: Project[] = [...initialProjects];
 let memoryCertifications: Certification[] = [...initialCertifications];
 let memorySkills: SkillCategory[] = [...initialSkills];
+let memoryHighlights: Highlight[] = [...initialHighlights];
 let memoryMessages: ContactMessage[] = [...initialMessages];
 let memoryCredentials: AdminCredentials = {
   id: 'primary',
@@ -195,6 +198,31 @@ export async function deleteExperience(id: string): Promise<boolean> {
   return true;
 }
 
+// Helper to unpack document_url and document_name stored in tags
+function parseProjectDocument(p: Project): Project {
+  if (!p.tags || !Array.isArray(p.tags)) return p;
+  let document_url = p.document_url;
+  let document_name = p.document_name;
+  const regularTags: string[] = [];
+
+  for (const t of p.tags) {
+    if (typeof t === 'string' && t.startsWith('__doc:')) {
+      document_url = t.slice(6);
+    } else if (typeof t === 'string' && t.startsWith('__docname:')) {
+      document_name = t.slice(10);
+    } else {
+      regularTags.push(t);
+    }
+  }
+
+  return {
+    ...p,
+    tags: regularTags,
+    document_url,
+    document_name,
+  };
+}
+
 // --- PROJECTS ---
 export async function getProjects(): Promise<Project[]> {
   if (isSupabaseConfigured() && supabase) {
@@ -208,33 +236,38 @@ export async function getProjects(): Promise<Project[]> {
         if (data.length === 0 && initialProjects.length > 0) {
           const client = getAdminSupabase();
           if (client) {
-            const sanitized = initialProjects.map((p) => ({
-              id: p.id,
-              title: p.title,
-              location: p.location,
-              duration: p.duration,
-              description: p.description,
-              deliverable: p.deliverable,
-              deliverable_color: p.deliverable_color,
-              tags: p.tags,
-              image_url: p.image_url,
-              order_index: p.order_index,
-            }));
+            const sanitized = initialProjects.map((p) => {
+              const tags = [...(p.tags || [])];
+              if (p.document_url) tags.push(`__doc:${p.document_url}`);
+              if (p.document_name) tags.push(`__docname:${p.document_name}`);
+              return {
+                id: p.id,
+                title: p.title,
+                location: p.location,
+                duration: p.duration,
+                description: p.description,
+                deliverable: p.deliverable,
+                deliverable_color: p.deliverable_color,
+                tags,
+                image_url: p.image_url,
+                order_index: p.order_index,
+              };
+            });
             const { data: seeded } = await client.from('projects').upsert(sanitized).select();
             if (seeded && seeded.length > 0) {
-              memoryProjects = seeded as Project[];
+              memoryProjects = seeded.map(parseProjectDocument) as Project[];
               return memoryProjects;
             }
           }
         }
-        memoryProjects = data as Project[];
+        memoryProjects = (data as Project[]).map(parseProjectDocument);
         return memoryProjects;
       }
     } catch (e) {
       console.warn('Error fetching projects from Supabase:', e);
     }
   }
-  return memoryProjects.sort((a, b) => a.order_index - b.order_index);
+  return memoryProjects.map(parseProjectDocument).sort((a, b) => a.order_index - b.order_index);
 }
 
 export async function saveProject(item: Project): Promise<Project> {
@@ -243,7 +276,19 @@ export async function saveProject(item: Project): Promise<Project> {
     'deliverable', 'deliverable_color', 'tags', 'image_url', 'order_index'
   ];
   const dbPayload: Record<string, unknown> = {};
-  const record = item as unknown as Record<string, unknown>;
+
+  // Package document_url and document_name into tags for persistence without requiring DB schema changes
+  const cleanedTags = (item.tags || []).filter(
+    (t) => typeof t === 'string' && !t.startsWith('__doc:') && !t.startsWith('__docname:')
+  );
+  if (item.document_url) {
+    cleanedTags.push(`__doc:${item.document_url}`);
+  }
+  if (item.document_name) {
+    cleanedTags.push(`__docname:${item.document_name}`);
+  }
+
+  const record = { ...item, tags: cleanedTags } as unknown as Record<string, unknown>;
   for (const k of allowedKeys) {
     if (record[k] !== undefined) dbPayload[k] = record[k];
   }
@@ -261,7 +306,7 @@ export async function saveProject(item: Project): Promise<Project> {
         if (error) {
           console.error('Error saving project to Supabase:', error);
         } else if (data) {
-          const saved = data as Project;
+          const saved = parseProjectDocument(data as Project);
           const idx = memoryProjects.findIndex((p) => p.id === item.id);
           if (idx >= 0) memoryProjects[idx] = saved;
           else memoryProjects.push(saved);
@@ -273,13 +318,14 @@ export async function saveProject(item: Project): Promise<Project> {
     }
   }
 
+  const finalItem = { ...item, tags: cleanedTags.filter(t => !t.startsWith('__doc')) };
   const idx = memoryProjects.findIndex((p) => p.id === item.id);
   if (idx >= 0) {
-    memoryProjects[idx] = item;
+    memoryProjects[idx] = finalItem;
   } else {
-    memoryProjects.push(item);
+    memoryProjects.push(finalItem);
   }
-  return item;
+  return finalItem;
 }
 
 export async function deleteProject(id: string): Promise<boolean> {
@@ -390,6 +436,116 @@ export async function deleteCertification(id: string): Promise<boolean> {
     }
   }
   memoryCertifications = memoryCertifications.filter((c) => c.id !== id);
+  return true;
+}
+
+// --- HIGHLIGHTS (Pencapaian & Sorotan) ---
+export async function getHighlights(): Promise<Highlight[]> {
+  if (isSupabaseConfigured() && supabase) {
+    try {
+      // 1. Try dedicated table first
+      const { data, error } = await supabase
+        .from('highlights')
+        .select('*')
+        .order('order_index', { ascending: true });
+
+      if (!error && data && data.length > 0) {
+        memoryHighlights = data as Highlight[];
+        return memoryHighlights;
+      }
+
+      // 2. If table doesn't exist or empty, check datum_info in profiles
+      const { data: profData } = await supabase
+        .from('profiles')
+        .select('datum_info')
+        .eq('id', 'profile-main')
+        .maybeSingle();
+
+      if (profData?.datum_info) {
+        try {
+          const parsed = JSON.parse(profData.datum_info);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            memoryHighlights = parsed as Highlight[];
+            return memoryHighlights.sort((a, b) => a.order_index - b.order_index);
+          }
+        } catch {
+          // not json format yet
+        }
+      }
+    } catch (e) {
+      console.warn('Error fetching highlights from Supabase:', e);
+    }
+  }
+  return memoryHighlights.sort((a, b) => a.order_index - b.order_index);
+}
+
+export async function saveHighlight(item: Highlight): Promise<Highlight> {
+  const allowedKeys = ['id', 'value', 'label', 'description', 'order_index'];
+  const dbPayload: Record<string, unknown> = {};
+  const record = item as unknown as Record<string, unknown>;
+  for (const k of allowedKeys) {
+    if (record[k] !== undefined) dbPayload[k] = record[k];
+  }
+
+  // Update in memory first
+  const idx = memoryHighlights.findIndex((h) => h.id === item.id);
+  if (idx >= 0) {
+    memoryHighlights[idx] = item;
+  } else {
+    memoryHighlights.push(item);
+  }
+
+  if (isSupabaseConfigured()) {
+    const client = getAdminSupabase();
+    if (client) {
+      try {
+        // Try saving to highlights table
+        const { data, error } = await client
+          .from('highlights')
+          .upsert(dbPayload)
+          .select()
+          .single();
+
+        if (!error && data) {
+          const saved = data as Highlight;
+          const i = memoryHighlights.findIndex((h) => h.id === item.id);
+          if (i >= 0) memoryHighlights[i] = saved;
+          return saved;
+        }
+
+        // If table doesn't exist, persist array into profiles.datum_info
+        await client
+          .from('profiles')
+          .update({ datum_info: JSON.stringify(memoryHighlights) })
+          .eq('id', 'profile-main');
+      } catch (e) {
+        console.warn('Error saving highlight to Supabase:', e);
+      }
+    }
+  }
+
+  return item;
+}
+
+export async function deleteHighlight(id: string): Promise<boolean> {
+  memoryHighlights = memoryHighlights.filter((h) => h.id !== id);
+
+  if (isSupabaseConfigured()) {
+    const client = getAdminSupabase();
+    if (client) {
+      try {
+        await client.from('highlights').delete().eq('id', id);
+        // Also persist updated array to profiles.datum_info
+        await client
+          .from('profiles')
+          .update({ datum_info: JSON.stringify(memoryHighlights) })
+          .eq('id', 'profile-main');
+      } catch (e) {
+        console.warn('Error deleting highlight from Supabase:', e);
+      }
+    }
+  }
+
   return true;
 }
 

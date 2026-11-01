@@ -10,12 +10,14 @@ export default function AdminProjectsPage() {
   const [tagInput, setTagInput] = useState('');
   const [saving, setSaving] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadingDoc, setUploadingDoc] = useState(false);
   const [feedback, setFeedback] = useState<{
     type: 'success' | 'error';
     text: string;
   } | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const docInputRef = useRef<HTMLInputElement>(null);
 
   const sampleImages = [
     { label: 'Singkapan Batuan Porfiri', url: 'https://images.unsplash.com/photo-1518384401463-d3876163c195?auto=format&fit=crop&w=1200&q=80' },
@@ -99,6 +101,49 @@ export default function AdminProjectsPage() {
       setFeedback({ type: 'error', text: 'Terjadi kesalahan jaringan saat mengunggah foto.' });
     } finally {
       setUploadingImage(false);
+    }
+  };
+
+  const handleDocUpload = async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    setUploadingDoc(true);
+    setFeedback(null);
+
+    try {
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (res.ok && data.url) {
+        setEditingItem((prev) =>
+          prev
+            ? {
+                ...prev,
+                document_url: data.url,
+                document_name: file.name,
+              }
+            : null
+        );
+        setFeedback({
+          type: 'success',
+          text: `Berkas paparan "${file.name}" berhasil diunggah!`,
+        });
+      } else {
+        setFeedback({
+          type: 'error',
+          text: data.error || 'Gagal mengunggah berkas presentasi.',
+        });
+      }
+    } catch {
+      setFeedback({
+        type: 'error',
+        text: 'Terjadi kesalahan jaringan saat mengunggah berkas.',
+      });
+    } finally {
+      setUploadingDoc(false);
     }
   };
 
@@ -420,6 +465,77 @@ export default function AdminProjectsPage() {
               </div>
             </div>
 
+            {/* Presentation Document Upload (PPT / PDF) */}
+            <div className="space-y-2 p-4 rounded-xl bg-surface border border-outline-variant/60">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-semibold text-on-surface flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-primary text-base">slideshow</span>
+                  <span>Paparan Proyek / Berkas Presentasi (PPT / PDF)</span>
+                </label>
+                <span className="text-[10px] font-mono text-on-surface-variant">
+                  Format: .pdf, .ppt, .pptx
+                </span>
+              </div>
+             
+
+              <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center pt-1">
+                <input
+                  type="file"
+                  ref={docInputRef}
+                  accept=".pdf,.ppt,.pptx,application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleDocUpload(file);
+                  }}
+                />
+
+                <button
+                  type="button"
+                  disabled={uploadingDoc}
+                  onClick={() => docInputRef.current?.click()}
+                  className="px-4 py-2 rounded-lg bg-surface-container-high hover:bg-surface-variant text-xs font-semibold text-on-surface flex items-center gap-2 border border-outline-variant/60 transition-all disabled:opacity-50"
+                >
+                  <span className="material-symbols-outlined text-sm">upload_file</span>
+                  <span>{uploadingDoc ? 'Mengunggah Berkas...' : 'Unggah File PPT / PDF'}</span>
+                </button>
+
+                {editingItem.document_url ? (
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/30 text-xs text-primary font-mono truncate max-w-full">
+                    <span className="material-symbols-outlined text-sm">check_circle</span>
+                    <span className="truncate">{editingItem.document_name || 'Berkas Terunggah'}</span>
+                    <a
+                      href={editingItem.document_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-primary hover:underline ml-1"
+                      title="Lihat Berkas"
+                    >
+                      [Buka]
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setEditingItem({
+                          ...editingItem,
+                          document_url: undefined,
+                          document_name: undefined,
+                        })
+                      }
+                      className="text-on-surface-variant hover:text-error ml-1 font-bold text-base"
+                      title="Hapus berkas dari proyek"
+                    >
+                      &times;
+                    </button>
+                  </div>
+                ) : (
+                  <span className="text-[11px] font-mono text-on-surface-variant italic">
+                    Belum ada berkas paparan dilampirkan.
+                  </span>
+                )}
+              </div>
+            </div>
+
             <div className="flex justify-end gap-2 pt-2 border-t border-surface-container-high">
               <button
                 type="button"
@@ -466,6 +582,12 @@ export default function AdminProjectsPage() {
                 <span className="absolute top-2 right-2 px-2 py-0.5 rounded bg-black/60 text-white font-mono text-[10px]">
                   {proj.duration}
                 </span>
+                {proj.document_url && (
+                  <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-primary text-white font-mono text-[10px] font-semibold flex items-center gap-1 shadow-xs">
+                    <span className="material-symbols-outlined text-xs">slideshow</span>
+                    PPT/PDF
+                  </span>
+                )}
               </div>
 
               <div className="p-4 space-y-2 flex-1 flex flex-col justify-between">

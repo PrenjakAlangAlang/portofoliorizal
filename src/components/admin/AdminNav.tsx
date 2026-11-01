@@ -18,6 +18,7 @@ export default function AdminNav() {
     { href: '/admin/experiences', label: 'Pengalaman Kerja', icon: 'history_edu' },
     { href: '/admin/projects', label: 'Pengalaman Proyek', icon: 'explore' },
     { href: '/admin/certifications', label: 'Sertifikasi & Pelatihan', icon: 'workspace_premium' },
+    { href: '/admin/highlights', label: 'Pencapaian & Sorotan', icon: 'insights' },
     { href: '/admin/skills', label: 'Keahlian Teknis', icon: 'build' },
     { href: '/admin/contact', label: 'Hubungi Saya & Pesan', icon: 'mail' },
     { href: '/admin/account', label: 'Keamanan Akun', icon: 'manage_accounts' },
