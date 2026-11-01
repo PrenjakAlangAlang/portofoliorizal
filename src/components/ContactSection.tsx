@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Profile } from '@/lib/types';
 import { useLanguage } from '@/context/LanguageContext';
 import { uiStrings, getLocalizedProfile } from '@/lib/translations';
+import ScrollReveal from './ScrollReveal';
 
 interface ContactSectionProps {
   profile: Profile;
@@ -64,79 +65,88 @@ export default function ContactSection({ profile }: ContactSectionProps) {
 
   return (
     <section className="space-y-8 pt-10 border-t border-surface-container-high" id="kontak">
-      <div className="space-y-2 text-center md:text-left">
-        <div className="flex items-center justify-center md:justify-start gap-3">
-          <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
-            <span className="material-symbols-outlined text-lg">connect_without_contact</span>
+      <ScrollReveal>
+        <div className="space-y-2 text-center md:text-left">
+          <div className="flex items-center justify-center md:justify-start gap-3">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
+              <span className="material-symbols-outlined text-lg">connect_without_contact</span>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-bold text-on-surface">
+              {t.sectionTitle}
+            </h2>
           </div>
-          <h2 className="text-xl sm:text-2xl font-bold text-on-surface">
-            {t.sectionTitle}
-          </h2>
+          <p className="text-xs sm:text-sm text-on-surface-variant max-w-xl">
+            {t.sectionSubtitle}
+          </p>
         </div>
-        <p className="text-xs sm:text-sm text-on-surface-variant max-w-xl">
-          {t.sectionSubtitle}
-        </p>
-      </div>
+      </ScrollReveal>
 
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Direct Contact Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {/* Email */}
-          <a
-            className="group p-5 rounded-xl bg-surface-container-lowest border border-surface-container-high flex flex-col items-center text-center space-y-3 transition-all hover:border-primary/50 hover:shadow-md"
-            href={`mailto:${locProfile.email}`}
-          >
-            <div className="w-12 h-12 rounded-xl bg-primary-fixed/50 text-primary flex items-center justify-center transition-colors group-hover:bg-primary group-hover:text-white">
-              <span className="material-symbols-outlined text-xl">mail</span>
-            </div>
-            <div className="space-y-1 w-full">
-              <span className="block text-[11px] font-mono text-on-surface-variant uppercase tracking-wider">
-                {t.emailLabel}
-              </span>
-              <span className="text-xs sm:text-sm font-semibold text-on-surface group-hover:text-primary transition-colors block break-all">
-                {locProfile.email}
-              </span>
-            </div>
-          </a>
+          <ScrollReveal delay={0}>
+            <a
+              className="group p-5 rounded-xl bg-surface-container-lowest border border-surface-container-high flex flex-col items-center text-center space-y-3 transition-all hover:border-primary/50 hover:shadow-md h-full"
+              href={`mailto:${locProfile.email}`}
+            >
+              <div className="w-12 h-12 rounded-xl bg-primary-fixed/50 text-primary flex items-center justify-center transition-colors group-hover:bg-primary group-hover:text-white">
+                <span className="material-symbols-outlined text-xl">mail</span>
+              </div>
+              <div className="space-y-1 w-full">
+                <span className="block text-[11px] font-mono text-on-surface-variant uppercase tracking-wider">
+                  {t.emailLabel}
+                </span>
+                <span className="text-xs sm:text-sm font-semibold text-on-surface group-hover:text-primary transition-colors block break-all">
+                  {locProfile.email}
+                </span>
+              </div>
+            </a>
+          </ScrollReveal>
 
           {/* WhatsApp */}
-          <a
-            className="group p-5 rounded-xl bg-surface-container-lowest border border-surface-container-high flex flex-col items-center text-center space-y-3 transition-all hover:border-primary/50 hover:shadow-md"
-            href={`https://wa.me/${locProfile.phone.replace(/[^0-9]/g, '')}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <div className="w-12 h-12 rounded-xl bg-primary-fixed/50 text-primary flex items-center justify-center transition-colors group-hover:bg-primary group-hover:text-white">
-              <span className="material-symbols-outlined text-xl">chat</span>
-            </div>
-            <div className="space-y-1 w-full">
-              <span className="block text-[11px] font-mono text-on-surface-variant uppercase tracking-wider">
-                {t.waLabel}
-              </span>
-              <span className="text-xs sm:text-sm font-semibold text-on-surface group-hover:text-primary transition-colors block">
-                {locProfile.phone}
-              </span>
-            </div>
-          </a>
+          <ScrollReveal delay={120}>
+            <a
+              className="group p-5 rounded-xl bg-surface-container-lowest border border-surface-container-high flex flex-col items-center text-center space-y-3 transition-all hover:border-primary/50 hover:shadow-md h-full"
+              href={`https://wa.me/${locProfile.phone.replace(/[^0-9]/g, '')}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <div className="w-12 h-12 rounded-xl bg-primary-fixed/50 text-primary flex items-center justify-center transition-colors group-hover:bg-primary group-hover:text-white">
+                <span className="material-symbols-outlined text-xl">chat</span>
+              </div>
+              <div className="space-y-1 w-full">
+                <span className="block text-[11px] font-mono text-on-surface-variant uppercase tracking-wider">
+                  {t.waLabel}
+                </span>
+                <span className="text-xs sm:text-sm font-semibold text-on-surface group-hover:text-primary transition-colors block">
+                  {locProfile.phone}
+                </span>
+              </div>
+            </a>
+          </ScrollReveal>
 
           {/* Domisili */}
-          <div className="p-5 rounded-xl bg-surface-container-lowest border border-surface-container-high flex flex-col items-center text-center space-y-3 shadow-xs">
-            <div className="w-12 h-12 rounded-xl bg-primary-fixed/50 text-primary flex items-center justify-center">
-              <span className="material-symbols-outlined text-xl">location_on</span>
+          <ScrollReveal delay={240}>
+            <div className="p-5 rounded-xl bg-surface-container-lowest border border-surface-container-high flex flex-col items-center text-center space-y-3 shadow-xs h-full">
+              <div className="w-12 h-12 rounded-xl bg-primary-fixed/50 text-primary flex items-center justify-center">
+                <span className="material-symbols-outlined text-xl">location_on</span>
+              </div>
+              <div className="space-y-1 w-full">
+                <span className="block text-[11px] font-mono text-on-surface-variant uppercase tracking-wider">
+                  {t.domicileLabel}
+                </span>
+                <span className="text-xs sm:text-sm font-semibold text-on-surface block">
+                  {locProfile.location}
+                </span>
+              </div>
             </div>
-            <div className="space-y-1 w-full">
-              <span className="block text-[11px] font-mono text-on-surface-variant uppercase tracking-wider">
-                {t.domicileLabel}
-              </span>
-              <span className="text-xs sm:text-sm font-semibold text-on-surface block">
-                {locProfile.location}
-              </span>
-            </div>
-          </div>
+          </ScrollReveal>
         </div>
 
         {/* Interactive Send Message Form */}
-        <div className="p-6 sm:p-8 rounded-2xl bg-surface-container-lowest border border-surface-container-high shadow-xs space-y-5">
+        <ScrollReveal delay={150}>
+          <div className="p-6 sm:p-8 rounded-2xl bg-surface-container-lowest border border-surface-container-high shadow-xs space-y-5">
           <div className="border-b border-surface-container-high pb-4">
             <h3 className="text-base sm:text-lg font-bold text-on-surface">
               {t.formTitle}
@@ -245,8 +255,10 @@ export default function ContactSection({ profile }: ContactSectionProps) {
             </button>
           </form>
         </div>
+      </ScrollReveal>
 
-        {/* Download CV CTA */}
+      {/* Download CV CTA */}
+      <ScrollReveal delay={200}>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
           <a
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-primary-container hover:bg-primary text-white text-xs sm:text-sm font-semibold transition-all shadow-sm active:scale-95"
@@ -257,6 +269,7 @@ export default function ContactSection({ profile }: ContactSectionProps) {
             <span>{t.downloadCvBtn}</span>
           </a>
         </div>
+      </ScrollReveal>
       </div>
     </section>
   );
