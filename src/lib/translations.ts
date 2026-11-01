@@ -13,7 +13,7 @@ export const uiStrings = {
       skills: 'Keahlian',
       contact: 'Kontak',
       downloadCv: 'Unduh CV',
-      roleSubtitle: 'IPK',
+      roleSubtitle: 'Teknik Geologi',
     },
     hero: {
       educationLabel: 'Pendidikan:',
@@ -81,7 +81,7 @@ export const uiStrings = {
       skills: 'Skills',
       contact: 'Contact',
       downloadCv: 'Download CV',
-      roleSubtitle: 'GPA',
+      roleSubtitle: 'Geological Engineering',
     },
     hero: {
       educationLabel: 'Education:',
