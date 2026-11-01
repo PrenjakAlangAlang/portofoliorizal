@@ -4,6 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { Certification } from '@/lib/types';
 
 export default function AdminCertificationsPage() {
+  const currentYear = new Date().getFullYear();
+  const yearOptions = Array.from({ length: currentYear + 2 - 1990 }, (_, i) => (currentYear + 1 - i).toString());
+
   const [certifications, setCertifications] = useState<Certification[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingItem, setEditingItem] = useState<Partial<Certification> | null>(null);
@@ -174,17 +177,23 @@ export default function AdminCertificationsPage() {
 
               <div className="space-y-1.5">
                 <label className="block text-xs font-semibold text-on-surface">
-                  Tahun Perolehan
+                  Tahun Perolehan <span className="text-error">*</span>
                 </label>
-                <input
-                  type="text"
-                  placeholder="2023"
+                <select
+                  required
                   value={editingItem.year || ''}
                   onChange={(e) =>
                     setEditingItem({ ...editingItem, year: e.target.value })
                   }
                   className="w-full px-3.5 py-2 rounded-lg border border-outline-variant/60 bg-surface text-xs sm:text-sm font-mono focus:outline-hidden focus:border-primary"
-                />
+                >
+                  <option value="">Pilih Tahun</option>
+                  {yearOptions.map((y) => (
+                    <option key={y} value={y}>
+                      {y}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 

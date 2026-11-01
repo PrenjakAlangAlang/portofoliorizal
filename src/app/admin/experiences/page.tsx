@@ -4,11 +4,16 @@ import React, { useState, useEffect } from 'react';
 import { Experience } from '@/lib/types';
 
 export default function AdminExperiencesPage() {
+  const currentYear = new Date().getFullYear();
+  const yearOptions = Array.from({ length: currentYear + 2 - 1990 }, (_, i) => (currentYear + 1 - i).toString());
+
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingItem, setEditingItem] = useState<Partial<Experience> | null>(null);
   const [tagInput, setTagInput] = useState('');
   const [saving, setSaving] = useState(false);
+  const [startYear, setStartYear] = useState<string>('');
+  const [endYear, setEndYear] = useState<string>('Sekarang');
   const [feedback, setFeedback] = useState<{
     type: 'success' | 'error';
     text: string;
@@ -32,13 +37,31 @@ export default function AdminExperiencesPage() {
     loadData();
   }, []);
 
+  const handlePeriodChange = (start: string, end: string) => {
+    setStartYear(start);
+    setEndYear(end);
+    let formatted = '';
+    if (start && end) {
+      formatted = `${start} — ${end}`;
+    } else if (start) {
+      formatted = start;
+    } else if (end) {
+      formatted = end;
+    }
+    setEditingItem((prev) => (prev ? { ...prev, period: formatted } : null));
+  };
+
   const handleCreateNew = () => {
+    const defaultStart = (currentYear - 2).toString();
+    const defaultEnd = 'Sekarang';
+    setStartYear(defaultStart);
+    setEndYear(defaultEnd);
     setEditingItem({
       id: `exp-${Date.now()}`,
       title: '',
       company: '',
       location: '',
-      period: '',
+      period: `${defaultStart} — ${defaultEnd}`,
       description: '',
       tags: [],
       order_index: experiences.length,
@@ -47,6 +70,18 @@ export default function AdminExperiencesPage() {
   };
 
   const handleEdit = (item: Experience) => {
+    const rawPeriod = item.period || '';
+    const parts = rawPeriod.split(/[—–-]/).map((s) => s.trim());
+    if (parts.length >= 2) {
+      setStartYear(parts[0]);
+      setEndYear(parts[1]);
+    } else if (parts.length === 1 && parts[0]) {
+      setStartYear(parts[0]);
+      setEndYear(parts[0]);
+    } else {
+      setStartYear('');
+      setEndYear('Sekarang');
+    }
     setEditingItem({ ...item });
     setTagInput('');
   };
@@ -214,18 +249,52 @@ export default function AdminExperiencesPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-on-surface">
-                  Periode Waktu
-                </label>
-                <input
-                  type="text"
-                  placeholder="2022 — Sekarang"
-                  value={editingItem.period || ''}
-                  onChange={(e) =>
-                    setEditingItem({ ...editingItem, period: e.target.value })
-                  }
-                  className="w-full px-3.5 py-2 rounded-lg border border-outline-variant/60 bg-surface text-xs sm:text-sm font-mono focus:outline-hidden focus:border-primary"
-                />
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-semibold text-on-surface">
+                    Periode Kerja (Tahun) <span className="text-error">*</span>
+                  </label>
+                  {editingItem.period && (
+                    <span className="text-[11px] font-mono text-primary font-bold">
+                      {editingItem.period}
+                    </span>
+                  )}
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-[10px] text-on-surface-variant font-medium mb-1">
+                      Dari (Mulai)
+                    </label>
+                    <select
+                      value={startYear}
+                      onChange={(e) => handlePeriodChange(e.target.value, endYear)}
+                      className="w-full px-2.5 py-2 rounded-lg border border-outline-variant/60 bg-surface text-xs font-mono focus:outline-hidden focus:border-primary"
+                    >
+                      <option value="">Pilih Tahun</option>
+                      {yearOptions.map((y) => (
+                        <option key={y} value={y}>
+                          {y}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] text-on-surface-variant font-medium mb-1">
+                      Sampai (Selesai)
+                    </label>
+                    <select
+                      value={endYear}
+                      onChange={(e) => handlePeriodChange(startYear, e.target.value)}
+                      className="w-full px-2.5 py-2 rounded-lg border border-outline-variant/60 bg-surface text-xs font-mono focus:outline-hidden focus:border-primary"
+                    >
+                      <option value="Sekarang">Sekarang (Aktif)</option>
+                      {yearOptions.map((y) => (
+                        <option key={y} value={y}>
+                          {y}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
               </div>
             </div>
 
