@@ -28,6 +28,13 @@ export const initialExperiences: Experience[] = [
     period: '2022 — Sekarang',
     description: 'Memimpin tim survei geologi lapangan untuk pemetaan alterasi hidrotermal dan supervisi pemboran inti diamond drill >3.500m dalam eksplorasi porfiri Cu-Au.',
     tags: ['Core Logging', 'Hydrothermal Alteration', 'Leapfrog 3D'],
+    skills: ['Leapfrog Geo', 'Core Logging', 'Hydrothermal Alteration', 'QA/QC Geologi', 'Micromine', 'ArcGIS Pro'],
+    responsibilities: [
+      'Memimpin dan mengarahkan kampanye pemetaan geologi permukaan skala 1:2.000 untuk zona alterasi tingkat tinggi.',
+      'Supervisi teknis pemboran eksplorasi diamond drill DDH hingga kedalaman kumulatif >3.500 meter.',
+      'Melakukan QA/QC sampling inti bor (duplicate, standard, blank) sesuai standar KCMI / JORC.',
+      'Rekonsiliasi model geologi 3D dan domain litologi-alterasi-mineralisasi menggunakan Leapfrog Geo.'
+    ],
     order_index: 0
   },
   {
@@ -38,6 +45,12 @@ export const initialExperiences: Experience[] = [
     period: '2020 — 2022',
     description: 'Interpretasi geokimia multielemen (XRF & ICP-MS), evaluasi petrografi mikroskopik, dan pemodelan sesar serta domain geologi menggunakan software 3D.',
     tags: ['Geokimia', 'Petrografi', 'ArcGIS Pro'],
+    skills: ['Interpretasi Geokimia', 'Analisis Petrografi', 'ArcGIS Pro', 'IoGAS', 'AutoCAD Civil 3D'],
+    responsibilities: [
+      'Pengolahan dan evaluasi data geokimia multielemen batuan dan tanah menggunakan ioGAS.',
+      'Deskripsi sayatan tipis batuan beku dan teralterasi di laboratorium mikroskop polarisasi.',
+      'Penyusunan basis data spasial GIS regional dan kompilasi peta anomali geokimia prospeksi.'
+    ],
     order_index: 1
   },
   {
@@ -48,6 +61,12 @@ export const initialExperiences: Experience[] = [
     period: '2019 — 2020',
     description: 'Monitoring cutting sampling real-time pada sumur eksplorasi geotermal entalpi tinggi dan pencatatan litologi serta rekahan produktif.',
     tags: ['Mudlogging', 'Geotermal'],
+    skills: ['Wellsite Mudlogging', 'Cutting Description', 'Gas Chromatography', 'H2S Safety'],
+    responsibilities: [
+      'Pengambilan dan pencucian sampel serbuk bor (drill cuttings) per interval 3 meter secara real-time.',
+      'Pencatatan log litologi harian (Masterlog) dan monitoring sirkulasi fluida pemboran (loss/gain).',
+      'Pemeriksaan mikroskop binokuler untuk identifikasi mineral ubahan penunjuk suhu geotermal (epidot, klorit, kalsit).'
+    ],
     order_index: 2
   }
 ];

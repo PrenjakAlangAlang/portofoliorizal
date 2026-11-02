@@ -103,6 +103,46 @@ export async function updateProfile(updated: Partial<Profile>): Promise<Profile>
 }
 
 // --- EXPERIENCES ---
+function parseExperienceItem(e: Experience): Experience {
+  if (!e.tags || !Array.isArray(e.tags)) return e;
+  let document_url = e.document_url;
+  let document_name = e.document_name;
+  let skills = e.skills ? [...e.skills] : [];
+  let responsibilities = e.responsibilities ? [...e.responsibilities] : [];
+  const regularTags: string[] = [];
+
+  for (const t of e.tags) {
+    if (typeof t === 'string' && t.startsWith('__doc:')) {
+      document_url = t.slice(6);
+    } else if (typeof t === 'string' && t.startsWith('__docname:')) {
+      document_name = t.slice(10);
+    } else if (typeof t === 'string' && t.startsWith('__skills:')) {
+      try {
+        skills = JSON.parse(t.slice(9));
+      } catch {
+        // ignore
+      }
+    } else if (typeof t === 'string' && t.startsWith('__resp:')) {
+      try {
+        responsibilities = JSON.parse(t.slice(7));
+      } catch {
+        // ignore
+      }
+    } else {
+      regularTags.push(t);
+    }
+  }
+
+  return {
+    ...e,
+    tags: regularTags,
+    skills,
+    responsibilities,
+    document_url,
+    document_name,
+  };
+}
+
 export async function getExperiences(): Promise<Experience[]> {
   if (isSupabaseConfigured() && supabase) {
     try {
@@ -127,25 +167,48 @@ export async function getExperiences(): Promise<Experience[]> {
             }));
             const { data: seeded } = await client.from('experiences').upsert(sanitized).select();
             if (seeded && seeded.length > 0) {
-              memoryExperiences = seeded as Experience[];
+              memoryExperiences = (seeded as Experience[]).map(parseExperienceItem);
               return memoryExperiences;
             }
           }
         }
-        memoryExperiences = data as Experience[];
+        memoryExperiences = (data as Experience[]).map(parseExperienceItem);
         return memoryExperiences;
       }
     } catch (e) {
       console.warn('Error fetching experiences from Supabase:', e);
     }
   }
-  return memoryExperiences.sort((a, b) => a.order_index - b.order_index);
+  return memoryExperiences.map(parseExperienceItem).sort((a, b) => a.order_index - b.order_index);
 }
 
 export async function saveExperience(item: Experience): Promise<Experience> {
   const allowedKeys = ['id', 'title', 'company', 'location', 'period', 'description', 'tags', 'order_index'];
   const dbPayload: Record<string, unknown> = {};
-  const record = item as unknown as Record<string, unknown>;
+
+  const cleanedTags = (item.tags || []).filter(
+    (t) =>
+      typeof t === 'string' &&
+      !t.startsWith('__doc:') &&
+      !t.startsWith('__docname:') &&
+      !t.startsWith('__skills:') &&
+      !t.startsWith('__resp:')
+  );
+
+  if (item.document_url) {
+    cleanedTags.push(`__doc:${item.document_url}`);
+  }
+  if (item.document_name) {
+    cleanedTags.push(`__docname:${item.document_name}`);
+  }
+  if (item.skills && item.skills.length > 0) {
+    cleanedTags.push(`__skills:${JSON.stringify(item.skills)}`);
+  }
+  if (item.responsibilities && item.responsibilities.length > 0) {
+    cleanedTags.push(`__resp:${JSON.stringify(item.responsibilities)}`);
+  }
+
+  const record = { ...item, tags: cleanedTags } as unknown as Record<string, unknown>;
   for (const k of allowedKeys) {
     if (record[k] !== undefined) dbPayload[k] = record[k];
   }
@@ -163,7 +226,7 @@ export async function saveExperience(item: Experience): Promise<Experience> {
         if (error) {
           console.error('Error saving experience to Supabase:', error);
         } else if (data) {
-          const saved = data as Experience;
+          const saved = parseExperienceItem(data as Experience);
           const idx = memoryExperiences.findIndex((e) => e.id === item.id);
           if (idx >= 0) memoryExperiences[idx] = saved;
           else memoryExperiences.push(saved);
@@ -175,13 +238,14 @@ export async function saveExperience(item: Experience): Promise<Experience> {
     }
   }
 
+  const parsed = parseExperienceItem(item);
   const idx = memoryExperiences.findIndex((e) => e.id === item.id);
   if (idx >= 0) {
-    memoryExperiences[idx] = item;
+    memoryExperiences[idx] = parsed;
   } else {
-    memoryExperiences.push(item);
+    memoryExperiences.push(parsed);
   }
-  return item;
+  return parsed;
 }
 
 export async function deleteExperience(id: string): Promise<boolean> {

@@ -1,11 +1,16 @@
 'use client';
 
 import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { Project } from '@/lib/types';
 import { useLanguage } from '@/context/LanguageContext';
 import { uiStrings, getLocalizedProjects } from '@/lib/translations';
 import ScrollReveal from './ScrollReveal';
-import ProjectPresentationModal from './ProjectPresentationModal';
+
+const ProjectPresentationModal = dynamic(
+  () => import('./ProjectPresentationModal'),
+  { ssr: false }
+);
 
 interface ProjectsSectionProps {
   projects: Project[];

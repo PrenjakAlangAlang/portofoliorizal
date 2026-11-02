@@ -1,10 +1,16 @@
 'use client';
 
-import React from 'react';
-import { Experience } from '@/lib/types';
+import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
+import { Experience, parseResponsibilities } from '@/lib/types';
 import { useLanguage } from '@/context/LanguageContext';
 import { uiStrings, getLocalizedExperiences } from '@/lib/translations';
 import ScrollReveal from './ScrollReveal';
+
+const ExperiencePresentationModal = dynamic(
+  () => import('./ExperiencePresentationModal'),
+  { ssr: false }
+);
 
 interface ExperienceSectionProps {
   experiences: Experience[];
@@ -12,6 +18,7 @@ interface ExperienceSectionProps {
 
 export default function ExperienceSection({ experiences }: ExperienceSectionProps) {
   const { lang, translations, registerTexts } = useLanguage();
+  const [activeExperience, setActiveExperience] = useState<Experience | null>(null);
 
   React.useEffect(() => {
     const allTexts: string[] = [];
@@ -21,6 +28,8 @@ export default function ExperienceSection({ experiences }: ExperienceSectionProp
       if (exp.location) allTexts.push(exp.location);
       if (exp.period) allTexts.push(exp.period);
       if (exp.tags) allTexts.push(...exp.tags);
+      if (exp.skills) allTexts.push(...exp.skills);
+      if (exp.responsibilities) allTexts.push(...exp.responsibilities);
     });
     registerTexts(allTexts);
   }, [experiences, registerTexts]);
@@ -50,7 +59,7 @@ export default function ExperienceSection({ experiences }: ExperienceSectionProp
         {locExperiences.map((exp, index) => (
           <ScrollReveal key={exp.id} delay={index * 130}>
             <div
-              className="p-5 rounded-xl bg-surface-container-lowest border border-surface-container-high space-y-2.5 transition-all hover:border-primary/40 hover:shadow-md group"
+              className="p-5 rounded-xl bg-surface-container-lowest border border-surface-container-high space-y-3 transition-all hover:border-primary/40 hover:shadow-md group"
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                 <h3 className="text-base sm:text-lg font-bold text-on-surface group-hover:text-primary transition-colors">
@@ -68,12 +77,39 @@ export default function ExperienceSection({ experiences }: ExperienceSectionProp
                 <span className="text-on-surface-variant">{exp.location}</span>
               </div>
 
-              <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
-                {exp.description}
-              </p>
+              {/* Uraian Tanggung Jawab (1 poin per baris) */}
+              {(() => {
+                const points = parseResponsibilities(exp.description, exp.responsibilities);
+                if (
+                  points.length <= 1 &&
+                  !exp.description?.includes('•') &&
+                  !exp.description?.includes('\n')
+                ) {
+                  return (
+                    <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
+                      {points[0] || exp.description}
+                    </p>
+                  );
+                }
+                return (
+                  <ul className="space-y-1.5 pt-0.5">
+                    {points.map((pt, idx) => (
+                      <li
+                        key={idx}
+                        className="flex items-start gap-2 text-xs sm:text-sm text-on-surface-variant leading-relaxed"
+                      >
+                        <span className="text-primary font-bold select-none text-base leading-none mt-0.5 shrink-0">
+                          &bull;
+                        </span>
+                        <span>{pt}</span>
+                      </li>
+                    ))}
+                  </ul>
+                );
+              })()}
 
               {exp.tags && exp.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 pt-2 border-t border-surface-container-high/40">
+                <div className="flex flex-wrap gap-2 pt-1">
                   {exp.tags.map((tag, i) => (
                     <span
                       key={i}
@@ -84,10 +120,32 @@ export default function ExperienceSection({ experiences }: ExperienceSectionProp
                   ))}
                 </div>
               )}
+
+              {/* Tombol Lihat Proyek (sesuai tombol di Proyek & Kredensial) */}
+              <div className="pt-2.5 border-t border-surface-container-high/40">
+                <button
+                  type="button"
+                  onClick={() => setActiveExperience(exp)}
+                  className="inline-flex items-center gap-1 text-[11px] font-mono text-primary hover:underline cursor-pointer group/link"
+                >
+                  <span>{t.viewProject || 'Lihat Proyek'}</span>
+                  <span className="material-symbols-outlined text-xs transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5">
+                    arrow_outward
+                  </span>
+                </button>
+              </div>
             </div>
           </ScrollReveal>
         ))}
       </div>
+
+      {/* Modal Paparan / Slide Viewer Pengalaman Kerja */}
+      {activeExperience && (
+        <ExperiencePresentationModal
+          experience={activeExperience}
+          onClose={() => setActiveExperience(null)}
+        />
+      )}
     </section>
   );
 }

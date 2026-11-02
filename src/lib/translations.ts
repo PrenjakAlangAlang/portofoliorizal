@@ -27,6 +27,7 @@ export const uiStrings = {
     experience: {
       sectionTitle: 'Pengalaman Kerja',
       badge: 'Riwayat Karir',
+      viewProject: 'Lihat Proyek',
     },
     projects: {
       sectionTitle: 'Portofolio Proyek',
@@ -101,6 +102,7 @@ export const uiStrings = {
     experience: {
       sectionTitle: 'Work Experience',
       badge: 'Career Stratigraphy',
+      viewProject: 'View Project',
     },
     projects: {
       sectionTitle: 'Project Portfolio',
@@ -198,6 +200,9 @@ export function getLocalizedExperiences(
       period: exp.period_en || translateText(exp.period, dict),
       description: exp.description_en || translateText(exp.description, dict),
       tags: exp.tags?.map((tag) => translateText(tag, dict)) || [],
+      skills: exp.skills?.map((sk) => translateText(sk, dict)) || [],
+      responsibilities:
+        exp.responsibilities?.map((r) => translateText(r, dict)) || [],
     }));
   }
   return experiences;

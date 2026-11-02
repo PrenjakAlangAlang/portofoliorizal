@@ -41,7 +41,42 @@ export interface Experience {
   description: string;
   description_en?: string;
   tags: string[];
+  skills?: string[];
+  responsibilities?: string[];
+  document_url?: string;
+  document_name?: string;
   order_index: number;
+}
+
+export function parseResponsibilities(
+  description?: string,
+  responsibilities?: string[]
+): string[] {
+  if (responsibilities && responsibilities.length > 0) {
+    return responsibilities
+      .map((r) => r.replace(/^[-•*]\s*/, '').trim())
+      .filter(Boolean);
+  }
+
+  if (!description) return [];
+
+  // If text contains bullet characters '•'
+  if (description.includes('•')) {
+    return description
+      .split('•')
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+
+  // If text contains newlines
+  if (description.includes('\n')) {
+    return description
+      .split(/\r?\n+/)
+      .map((line) => line.replace(/^[-*•\d+.]\s*/, '').trim())
+      .filter(Boolean);
+  }
+
+  return [description.trim()];
 }
 
 export interface ProjectDetails {
