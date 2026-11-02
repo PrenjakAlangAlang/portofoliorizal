@@ -42,6 +42,16 @@ export default function AdminSkillsPage() {
     loadData();
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setEditingItem(null);
+    };
+    if (editingItem) {
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [editingItem]);
+
   const handleCreateNew = () => {
     setEditingItem({
       id: `skill-${Date.now()}`,
@@ -152,22 +162,32 @@ export default function AdminSkillsPage() {
         </div>
       )}
 
-      {/* Editor Modal / Form */}
+      {/* Editor Modal Overlay */}
       {editingItem && (
-        <div className="p-6 rounded-2xl bg-surface-container-lowest border border-primary/40 shadow-lg space-y-4 animate-in slide-in-from-top-2 duration-200">
-          <div className="flex items-center justify-between border-b border-surface-container-high pb-3">
-            <h2 className="text-sm font-bold text-on-surface">
-              {editingItem.id && skills.some((s) => s.id === editingItem.id)
-                ? 'Edit Kategori Keahlian'
-                : 'Tambah Kategori Baru'}
-            </h2>
-            <button
-              onClick={() => setEditingItem(null)}
-              className="text-on-surface-variant hover:text-on-surface"
-            >
-              <span className="material-symbols-outlined text-xl">close</span>
-            </button>
-          </div>
+        <div
+          className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs overflow-y-auto p-4 sm:p-6 md:p-8 flex justify-center items-start animate-in fade-in duration-200"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setEditingItem(null);
+          }}
+        >
+          <div
+            className="w-full max-w-xl my-4 sm:my-8 p-6 rounded-2xl bg-surface-container-lowest border border-surface-container-high shadow-2xl space-y-4 text-on-surface animate-in zoom-in-95 duration-150 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-surface-container-high pb-3">
+              <h2 className="text-sm font-bold text-on-surface">
+                {editingItem.id && skills.some((s) => s.id === editingItem.id)
+                  ? 'Edit Kategori Keahlian'
+                  : 'Tambah Kategori Baru'}
+              </h2>
+              <button
+                onClick={() => setEditingItem(null)}
+                className="text-on-surface-variant hover:text-on-surface cursor-pointer p-1 rounded-md"
+                title="Tutup (Esc)"
+              >
+                <span className="material-symbols-outlined text-xl">close</span>
+              </button>
+            </div>
 
           <form onSubmit={handleSave} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -265,12 +285,13 @@ export default function AdminSkillsPage() {
               <button
                 type="submit"
                 disabled={saving}
-                className="px-5 py-2 rounded-lg bg-primary hover:bg-primary-container text-white text-xs font-semibold transition-all disabled:opacity-50"
+                className="px-5 py-2 rounded-lg bg-primary hover:bg-primary-container text-white text-xs font-semibold transition-all disabled:opacity-50 cursor-pointer"
               >
                 {saving ? 'Menyimpan...' : 'Simpan Kategori'}
               </button>
             </div>
           </form>
+          </div>
         </div>
       )}
 

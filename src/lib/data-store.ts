@@ -8,6 +8,7 @@ import {
   ContactMessage,
   AdminCredentials,
   Highlight,
+  ProjectDetails,
 } from './types';
 import {
   initialProfile,
@@ -198,11 +199,12 @@ export async function deleteExperience(id: string): Promise<boolean> {
   return true;
 }
 
-// Helper to unpack document_url and document_name stored in tags
+// Helper to unpack document_url, document_name, and details stored in tags
 function parseProjectDocument(p: Project): Project {
   if (!p.tags || !Array.isArray(p.tags)) return p;
   let document_url = p.document_url;
   let document_name = p.document_name;
+  let details = p.details;
   const regularTags: string[] = [];
 
   for (const t of p.tags) {
@@ -210,6 +212,12 @@ function parseProjectDocument(p: Project): Project {
       document_url = t.slice(6);
     } else if (typeof t === 'string' && t.startsWith('__docname:')) {
       document_name = t.slice(10);
+    } else if (typeof t === 'string' && t.startsWith('__details:')) {
+      try {
+        details = JSON.parse(t.slice(10));
+      } catch {
+        // ignore malformed
+      }
     } else {
       regularTags.push(t);
     }
@@ -220,6 +228,7 @@ function parseProjectDocument(p: Project): Project {
     tags: regularTags,
     document_url,
     document_name,
+    details,
   };
 }
 
@@ -240,6 +249,7 @@ export async function getProjects(): Promise<Project[]> {
               const tags = [...(p.tags || [])];
               if (p.document_url) tags.push(`__doc:${p.document_url}`);
               if (p.document_name) tags.push(`__docname:${p.document_name}`);
+              if (p.details) tags.push(`__details:${JSON.stringify(p.details)}`);
               return {
                 id: p.id,
                 title: p.title,
@@ -277,15 +287,22 @@ export async function saveProject(item: Project): Promise<Project> {
   ];
   const dbPayload: Record<string, unknown> = {};
 
-  // Package document_url and document_name into tags for persistence without requiring DB schema changes
+  // Package document_url, document_name, and details into tags for persistence without requiring DB schema changes
   const cleanedTags = (item.tags || []).filter(
-    (t) => typeof t === 'string' && !t.startsWith('__doc:') && !t.startsWith('__docname:')
+    (t) =>
+      typeof t === 'string' &&
+      !t.startsWith('__doc:') &&
+      !t.startsWith('__docname:') &&
+      !t.startsWith('__details:')
   );
   if (item.document_url) {
     cleanedTags.push(`__doc:${item.document_url}`);
   }
   if (item.document_name) {
     cleanedTags.push(`__docname:${item.document_name}`);
+  }
+  if (item.details) {
+    cleanedTags.push(`__details:${JSON.stringify(item.details)}`);
   }
 
   const record = { ...item, tags: cleanedTags } as unknown as Record<string, unknown>;
@@ -318,7 +335,7 @@ export async function saveProject(item: Project): Promise<Project> {
     }
   }
 
-  const finalItem = { ...item, tags: cleanedTags.filter(t => !t.startsWith('__doc')) };
+  const finalItem = parseProjectDocument({ ...item, tags: cleanedTags });
   const idx = memoryProjects.findIndex((p) => p.id === item.id);
   if (idx >= 0) {
     memoryProjects[idx] = finalItem;

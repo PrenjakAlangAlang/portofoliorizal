@@ -18,6 +18,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'File tidak ditemukan' }, { status: 400 });
     }
 
+    // Limit maximum file size to 100 MB
+    const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100 MB
+    if (file.size > MAX_FILE_SIZE) {
+      const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
+      return NextResponse.json(
+        { error: `Ukuran berkas (${sizeMb} MB) melebihi batas maksimal 100 MB.` },
+        { status: 400 }
+      );
+    }
+
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 

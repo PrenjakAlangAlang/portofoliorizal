@@ -55,17 +55,65 @@ export const initialExperiences: Experience[] = [
 export const initialProjects: Project[] = [
   {
     id: 'proj-1',
-    title: 'Pemetaan Geologi Regional & Alterasi Porfiri Cu-Au',
-    location: 'Halmahera Utara',
-    duration: '8 Bulan',
-    description: 'Survei 120 singkapan batuan, zoning alterasi hidrotermal, dan 85 rock chip sampling untuk target eksplorasi bor.',
-    deliverable: 'Peta Geologi 1:25.000 & Model Target Bor',
+    title: 'Carbonate Reservoir Characterization of the Baturaja Formation Using SPEIL, SCPEI, and Seismic Stratigraphic Analysis',
+    location: 'Cekungan Sumatera Selatan',
+    duration: 'APRIL 2026 – JULY 2026',
+    description: 'Undergraduate thesis at Institut Teknologi Bandung focused on quantitative characterization of the Baturaja Formation carbonate reservoir, combining extended elastic impedance attributes (SPEIL, SCPEI) with seismic stratigraphic analysis to identify high-quality reservoir zones.',
+    deliverable: 'Model Inversi 3D & Rekomendasi Pemboran',
     deliverable_color: 'primary',
-    tags: ['Eksplorasi Porfiri', 'Singkapan', 'Sampling'],
+    tags: ['Carbonate Reservoir', 'Seismic Inversion', 'SPEIL', 'SCPEI', 'Rock Physics', 'Seismic Stratigraphy'],
     image_url: 'https://images.unsplash.com/photo-1518384401463-d3876163c195?auto=format&fit=crop&w=1200&q=80',
     document_url: 'https://kdokmvnpixzcwmslpsee.supabase.co/storage/v1/object/public/portfolio/1793524292032_CV_Novrijal_Ramadhany.pdf',
-    document_name: 'Paparan_Eksplorasi_Porfiri.pdf',
-    order_index: 0
+    document_name: 'Paparan_Karakterisasi_Reservoir_Karbonat.pdf',
+    details: {
+      objectives: [
+        'Characterize carbonate reservoir quality from elastic and reservoir-property volumes.',
+        'Define quantitative cut-offs that separate reservoir from non-reservoir facies.',
+        'Translate the integrated interpretation into a drilling recommendation.',
+      ],
+      dataset: [
+        '3 wells with complete petrophysical suites',
+        '3D partial-stack seismic volumes',
+        'Checkshot and well marker data',
+      ],
+      workflow: [
+        'Well log conditioning and petrophysical analysis',
+        'Rock physics analysis and sensitivity testing',
+        'Well-to-seismic tie and wavelet extraction',
+        'Seismic stratigraphic framework interpretation',
+        'Simultaneous and extended elastic impedance inversion',
+        'Reservoir property prediction and QC',
+      ],
+      methods: [
+        'Seismic stratigraphy',
+        'Rock physics modeling',
+        'SPEIL / SCPEI extended elastic impedance',
+        'Acoustic impedance and Vp/Vs inversion',
+      ],
+      results: [
+        'Integrated well, petrophysical, and 3D partial-stack seismic data from 3 wells.',
+        'Generated and evaluated 6 elastic and reservoir-property volumes: AI, Vp/Vs, SPEIL, SCPEI, pseudo-density, and pseudo-porosity.',
+        'Achieved inversion QC correlations reaching 0.93.',
+        'Established quantitative reservoir indicators of P-Impedance < 6,400 (m/s·g/cc) and Vp/Vs < 2.',
+      ],
+      key_findings: [
+        'A reefal buildup was identified as the highest-quality reservoir sweet spot.',
+        'Drilling recommendation targets an anticline crest with structural closure and favorable reservoir quality.',
+      ],
+      software_used: ['Petrel', 'Hampson-Russell', 'Interactive Petrophysics', 'Python'],
+      doc_description:
+        'Complete undergraduate thesis documenting the integrated seismic, well-log, petrophysical, inversion, and seismic-stratigraphic workflow used for carbonate reservoir characterization.',
+      doc_tags: [
+        '3 Wells',
+        '6 Reservoir / Elastic Volumes',
+        'Seismic Inversion',
+        'SPEIL',
+        'SCPEI',
+        'Seismic Stratigraphy',
+        'Reservoir Characterization',
+      ],
+    },
+    order_index: 0,
   },
   {
     id: 'proj-2',
@@ -75,9 +123,49 @@ export const initialProjects: Project[] = [
     description: 'Analisis 45 preparasi thin section sayatan tipis untuk mengidentifikasi provenans tektonik serta fasa lempung XRD.',
     deliverable: 'Atlas Petrografi & Laporan Provenans',
     deliverable_color: 'secondary',
-    tags: ['Thin Section', 'Petrografi', 'XRD'],
+    tags: ['Thin Section', 'Petrografi', 'XRD', 'Provenans Sedimen'],
     image_url: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80',
-    order_index: 1
+    details: {
+      objectives: [
+        'Menentukan komposisi mineralogi dan klasifikasi batuan sedimen klastik.',
+        'Menganalisis diagenesis batuan dan pengaruhnya terhadap kualitas porositas.',
+        'Mengonstruksi provenans tektonik dan lingkungan pengendapan regional.',
+      ],
+      dataset: [
+        '45 preparasi sayatan tipis (thin section) batuan inti dan singkapan',
+        'Data difraksi sinar-X (XRD) untuk identifikasi fasa lempung',
+        'Analisis geokimia unsur utama (XRF) 20 sampel batuan',
+      ],
+      workflow: [
+        'Sampling batuan lapangan & pemotongan spesimen',
+        'Preparasi sayatan tipis berstandar 0.03 mm',
+        'Point counting mikroskop polarisasi 300 titik per sayatan',
+        'Uji difraksi sinar-X (XRD) fraksi lempung',
+        'Klasifikasi segitiga Dickinson & rekonstruksi provenans',
+        'Penyusunan atlas petrografi & laporan komparatif',
+      ],
+      methods: [
+        'Optical Petrography Polarizing Microscope',
+        'X-Ray Diffraction (XRD) Clay Mineralogy',
+        'Dickinson Provenance Ternary Diagram',
+        'Diagenetic Sequence Modeling',
+      ],
+      results: [
+        'Teridentifikasi litologi dominan Sublitharenite dan Feldspathic Wacke.',
+        'Fasa lempung didominasi oleh Ilit dan Smektit teralterasi.',
+        'Indeks porositas sekunder berkembang akibat disolusi feldspar.',
+        'Atlas petrografi 45 sampel resolusi tinggi tersusun rapi.',
+      ],
+      key_findings: [
+        'Provenans batuan menunjukkan tatanan tektonik Recycled Orogen.',
+        'Zona reservoar terbaik berasosiasi dengan fasies channel sandstone berbutir sedang.',
+      ],
+      software_used: ['JMicroVision', 'RockJock XRD', 'ArcGIS Pro', 'Microsoft Excel'],
+      doc_description:
+        'Dokumen teknis komparatif analisis mikroskopis petrografi, difraksi sinar-X (XRD), dan rekonstruksi sejarah pengendapan sedimen.',
+      doc_tags: ['45 Thin Sections', 'XRD Analysis', 'Petrografi', 'Sedimentologi', 'Atlas Batuan'],
+    },
+    order_index: 1,
   },
   {
     id: 'proj-3',
@@ -87,9 +175,48 @@ export const initialProjects: Project[] = [
     description: 'Survei geolistrik konfigurasi Schlumberger di 28 titik sounding untuk delimitasi akuifer tertekan dan sumur resapan.',
     deliverable: 'Peta Hidrogeologi & Penampang 2D',
     deliverable_color: 'tertiary',
-    tags: ['Geolistrik', 'Schlumberger', 'Akuifer'],
+    tags: ['Geolistrik', 'Schlumberger', 'Akuifer', 'Resistivitas'],
     image_url: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1200&q=80',
-    order_index: 2
+    details: {
+      objectives: [
+        'Memetakan geometri lapisan pembawa air tanah (akuifer bebas dan tertekan).',
+        'Menentukan zona kedalaman optimal untuk perencanaan sumur bor dalam.',
+        'Memberikan rekomendasi titik sumur resapan untuk konservasi air tanah.',
+      ],
+      dataset: [
+        '28 titik Vertical Electrical Sounding (VES) konfigurasi Schlumberger (AB/2 hingga 300m)',
+        'Data 12 log litologi sumur bor pembanding (ground truth)',
+        'Data pengukuran tinggi muka air tanah statis (muka pisometrik)',
+      ],
+      workflow: [
+        'Survei orientasi lapangan & pengukuran koordinat GNSS titik sounding',
+        'Akuisisi data resistivitas sounding multichannel',
+        'Filtering dan curve matching kurva tahanan jenis semu',
+        'Inversi 1D/2D menggunakan perangkat lunak geolistrik',
+        'Korelasi litologi dan penampang geohidrologi 2D',
+        'Penyusunan peta rekomendasi titik bor dan zona konservasi',
+      ],
+      methods: [
+        'Vertical Electrical Sounding (VES) Schlumberger Array',
+        '1D & 2D Resistivity Inversion Modeling',
+        'Piezometric Surface Mapping',
+        'Hydrogeological Cross-Section Correlation',
+      ],
+      results: [
+        'Ditemukan 3 sistem akuifer utama pada interval kedalaman 25-45m, 70-110m, dan >140m.',
+        'Resistivitas akuifer tertekan berada pada rentang 35 - 90 ohm.m (lapisan pasir tufaan).',
+        'Peta hidrogeologi 2D berhasil mendelimitasi area imbuhan dan lepasan.',
+      ],
+      key_findings: [
+        'Lapisan lempung pasiran bertindak sebagai confining bed tebal di sisi barat cekungan.',
+        'Titik bor produksi direkomendasikan pada zona depresi struktur dengan debit potensi tinggi.',
+      ],
+      software_used: ['IPI2win', 'Res2Dinv', 'Surfer', 'QGIS'],
+      doc_description:
+        'Laporan studi komprehensif pendugaan geolistrik resistivitas, penampang geohidrologi 2D, dan rekomendasi pemanfaatan air tanah berkelanjutan.',
+      doc_tags: ['28 Titik VES', 'Akuifer Tertekan', 'Geolistrik 2D', 'Hidrogeologi', 'Konservasi'],
+    },
+    order_index: 2,
   },
   {
     id: 'proj-4',
@@ -99,10 +226,50 @@ export const initialProjects: Project[] = [
     description: 'Pengolahan DEM resolusi tinggi dan pemodelan kestabilan lereng kritis untuk zonasi kerentanan gerakan tanah.',
     deliverable: 'Peta Bahaya Longsor Skala 1:10.000',
     deliverable_color: 'error',
-    tags: ['LiDAR', 'DEM', 'Geohazard'],
+    tags: ['LiDAR', 'DEM', 'Geohazard', 'Kestabilan Lereng'],
     image_url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80',
-    order_index: 3
-  }
+    details: {
+      objectives: [
+        'Identifikasi fitur morfologi longsoran purba dan bidang diskontinuitas lereng.',
+        'Menghitung faktor keamanan (FoK) lereng batuan dan tanah pada kondisi kritis.',
+        'Menyusun peta mikrozonasi kerentanan bencana tanah longsor skala 1:10.000.',
+      ],
+      dataset: [
+        'Data point cloud LiDAR udara kerapatan 8 pts/m²',
+        'Digital Elevation Model (DEM) resolusi 0.5 meter',
+        'Data uji mekanika tanah (kohesi, sudut geser dalam, bobot isi)',
+        'Data curah hujan ekstrem harian maksimum 10 tahun',
+      ],
+      workflow: [
+        'Filtering ground points data mentah LiDAR udara',
+        'Ekstraksi DEM, slope gradient, curvature, dan flow accumulation',
+        'Pemetaan ground truth rekahan dan gawir longsoran aktif',
+        'Pemodelan kestabilan lereng Limit Equilibrium Method (LEM)',
+        'Analisis probabilistik multi-kriteria AHP (Analytical Hierarchy Process)',
+        'Penyusunan zonasi kerentanan dan desain dinding penahan tanah (retaining wall)',
+      ],
+      methods: [
+        'LiDAR High-Resolution Terrain Extraction',
+        'Kinematic & Limit Equilibrium Analysis (Bishop / Janbu)',
+        'Spatial Multi-Criteria Evaluation (SMCE)',
+        'Hydrological Soil Slope Saturation Modeling',
+      ],
+      results: [
+        'Terpetakan 18 gawir longsoran aktif dan 7 mahkota longsoran potensial baru.',
+        'Faktor keamanan lereng kritis berada pada nilai FoK < 1.05 saat kondisi jenuh air.',
+        'Peta mikrozonasi bahaya tanah longsor skala 1:10.000 berhasil divalidasi.',
+      ],
+      key_findings: [
+        'Kontak bidang perlapisan tuf pasiran dan batulempung bertindak sebagai bidang gelincir utama.',
+        'Pemasangan sistem subdrainage dan perkuatan bronjong/terassering efektif menaikkan FoK > 1.4.',
+      ],
+      software_used: ['Rocscience Slide2', 'Global Mapper', 'ArcGIS Pro', 'CloudCompare'],
+      doc_description:
+        'Dokumen analisis geoteknik kestabilan lereng, pemrosesan LiDAR resolusi tinggi, dan rekomendasi mitigasi rekayasa geologi.',
+      doc_tags: ['LiDAR 0.5m', 'Limit Equilibrium', 'Geohazard', 'Mitigasi Longsor', 'Geoteknik'],
+    },
+    order_index: 3,
+  },
 ];
 
 export const initialCertifications: Certification[] = [

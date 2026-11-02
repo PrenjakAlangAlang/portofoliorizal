@@ -11,13 +11,12 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  ...(isWindows
-    ? {
-        experimental: {
-          cpus: 1,
-        },
-      }
-    : {}),
+  experimental: {
+    ...(isWindows ? { cpus: 1 } : {}),
+    serverActions: {
+      bodySizeLimit: '100mb',
+    },
+  },
 };
 
 export default nextConfig;

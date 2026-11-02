@@ -44,6 +44,18 @@ export interface Experience {
   order_index: number;
 }
 
+export interface ProjectDetails {
+  objectives?: string[];
+  dataset?: string[];
+  workflow?: string[];
+  methods?: string[];
+  results?: string[];
+  key_findings?: string[];
+  software_used?: string[];
+  doc_description?: string;
+  doc_tags?: string[];
+}
+
 export interface Project {
   id: string;
   title: string;
@@ -61,6 +73,7 @@ export interface Project {
   image_url: string;
   document_url?: string;
   document_name?: string;
+  details?: ProjectDetails;
   order_index: number;
 }
 

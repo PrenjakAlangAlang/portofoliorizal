@@ -31,6 +31,16 @@ export default function AdminHighlightsPage() {
     loadData();
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setEditingItem(null);
+    };
+    if (editingItem) {
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [editingItem]);
+
   const handleCreateNew = () => {
     setEditingItem({
       id: `hl-${Date.now()}`,
@@ -121,23 +131,33 @@ export default function AdminHighlightsPage() {
         </div>
       )}
 
-      {/* Modal / Editor Form */}
+      {/* Editor Modal Overlay */}
       {editingItem && (
-        <div className="p-6 rounded-2xl bg-surface-container-lowest border border-surface-container-high shadow-md space-y-5 animate-in fade-in zoom-in-95 duration-150">
-          <div className="flex items-center justify-between border-b border-surface-container-high pb-3">
-            <h2 className="text-sm font-bold text-on-surface flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-lg">insights</span>
-              {editingItem.id && highlights.some((h) => h.id === editingItem.id)
-                ? 'Edit Pencapaian / Sorotan'
-                : 'Tambah Pencapaian / Sorotan Baru'}
-            </h2>
-            <button
-              onClick={() => setEditingItem(null)}
-              className="text-on-surface-variant hover:text-on-surface p-1 rounded-lg"
-            >
-              <span className="material-symbols-outlined text-lg">close</span>
-            </button>
-          </div>
+        <div
+          className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs overflow-y-auto p-4 sm:p-6 md:p-8 flex justify-center items-start animate-in fade-in duration-200"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setEditingItem(null);
+          }}
+        >
+          <div
+            className="w-full max-w-xl my-4 sm:my-8 p-6 rounded-2xl bg-surface-container-lowest border border-surface-container-high shadow-2xl space-y-5 text-on-surface animate-in zoom-in-95 duration-150 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-surface-container-high pb-3">
+              <h2 className="text-sm font-bold text-on-surface flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary text-lg">insights</span>
+                {editingItem.id && highlights.some((h) => h.id === editingItem.id)
+                  ? 'Edit Pencapaian / Sorotan'
+                  : 'Tambah Pencapaian / Sorotan Baru'}
+              </h2>
+              <button
+                onClick={() => setEditingItem(null)}
+                className="text-on-surface-variant hover:text-on-surface p-1 rounded-lg cursor-pointer"
+                title="Tutup (Esc)"
+              >
+                <span className="material-symbols-outlined text-lg">close</span>
+              </button>
+            </div>
 
           <form onSubmit={handleSave} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -233,13 +253,14 @@ export default function AdminHighlightsPage() {
               <button
                 type="submit"
                 disabled={saving}
-                className="px-5 py-2 rounded-lg bg-primary text-white text-xs font-semibold hover:bg-primary/90 transition-colors shadow-xs flex items-center gap-1.5 disabled:opacity-50"
+                className="px-5 py-2 rounded-lg bg-primary text-white text-xs font-semibold hover:bg-primary/90 transition-colors shadow-xs flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
               >
                 <span className="material-symbols-outlined text-sm">save</span>
                 {saving ? 'Menyimpan...' : 'Simpan Sorotan'}
               </button>
             </div>
           </form>
+          </div>
         </div>
       )}
 
