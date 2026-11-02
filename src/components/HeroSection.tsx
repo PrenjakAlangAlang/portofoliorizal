@@ -44,7 +44,7 @@ export default function HeroSection({ profile }: HeroSectionProps) {
               </p>
             </div>
 
-            <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed">
+            <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed text-justify">
               {locProfile.bio}
             </p>
 

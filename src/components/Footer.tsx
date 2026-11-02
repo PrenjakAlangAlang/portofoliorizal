@@ -39,7 +39,7 @@ export default function Footer({ profile }: FooterProps) {
 
           <div className="flex flex-col items-start md:items-end gap-1.5">
             <span className="font-mono text-[11px] text-on-surface-variant">
-              {t.role}
+              {locProfile.title || t.role}
             </span>
           </div>
         </div>

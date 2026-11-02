@@ -18,12 +18,29 @@ export default function AdminExperiencesPage() {
   const [skillInput, setSkillInput] = useState('');
   const [saving, setSaving] = useState(false);
   const [uploadingDoc, setUploadingDoc] = useState(false);
+  const [startMonth, setStartMonth] = useState<string>('');
   const [startYear, setStartYear] = useState<string>('');
+  const [endMonth, setEndMonth] = useState<string>('');
   const [endYear, setEndYear] = useState<string>('Sekarang');
   const [feedback, setFeedback] = useState<{
     type: 'success' | 'error';
     text: string;
   } | null>(null);
+
+  const monthOptions = [
+    'Januari',
+    'Februari',
+    'Maret',
+    'April',
+    'Mei',
+    'Juni',
+    'Juli',
+    'Agustus',
+    'September',
+    'Oktober',
+    'November',
+    'Desember',
+  ];
 
   const docInputRef = useRef<HTMLInputElement>(null);
 
@@ -55,31 +72,52 @@ export default function AdminExperiencesPage() {
     }
   }, [editingItem]);
 
-  const handlePeriodChange = (start: string, end: string) => {
-    setStartYear(start);
-    setEndYear(end);
+  const handlePeriodComponentChange = (
+    sMonth: string,
+    sYear: string,
+    eMonth: string,
+    eYear: string
+  ) => {
+    setStartMonth(sMonth);
+    setStartYear(sYear);
+    setEndMonth(eMonth);
+    setEndYear(eYear);
+
+    const startPart = sMonth && sYear ? `${sMonth} ${sYear}` : sYear || sMonth;
+    let endPart = '';
+    if (eYear === 'Sekarang') {
+      endPart = 'Sekarang';
+    } else if (eMonth && eYear) {
+      endPart = `${eMonth} ${eYear}`;
+    } else {
+      endPart = eYear || eMonth;
+    }
+
     let formatted = '';
-    if (start && end) {
-      formatted = `${start} — ${end}`;
-    } else if (start) {
-      formatted = start;
-    } else if (end) {
-      formatted = end;
+    if (startPart && endPart) {
+      formatted = `${startPart} — ${endPart}`;
+    } else if (startPart) {
+      formatted = startPart;
+    } else if (endPart) {
+      formatted = endPart;
     }
     setEditingItem((prev) => (prev ? { ...prev, period: formatted } : null));
   };
 
   const handleCreateNew = () => {
-    const defaultStart = (currentYear - 2).toString();
+    const defaultStartYear = (currentYear - 2).toString();
+    const defaultStartMonth = 'Januari';
     const defaultEnd = 'Sekarang';
-    setStartYear(defaultStart);
+    setStartMonth(defaultStartMonth);
+    setStartYear(defaultStartYear);
+    setEndMonth('');
     setEndYear(defaultEnd);
     setEditingItem({
       id: `exp-${Date.now()}`,
       title: '',
       company: '',
       location: '',
-      period: `${defaultStart} — ${defaultEnd}`,
+      period: `${defaultStartMonth} ${defaultStartYear} — ${defaultEnd}`,
       description: '',
       responsibilities: [],
       tags: [],
@@ -95,14 +133,41 @@ export default function AdminExperiencesPage() {
   const handleEdit = (item: Experience) => {
     const rawPeriod = item.period || '';
     const parts = rawPeriod.split(/[—–-]/).map((s) => s.trim());
+
+    const parsePeriodPart = (str: string) => {
+      let m = '';
+      let y = '';
+      const tokens = str.split(/\s+/).map((t) => t.trim());
+      for (const t of tokens) {
+        const foundMonth = monthOptions.find((opt) => opt.toLowerCase() === t.toLowerCase());
+        if (foundMonth) {
+          m = foundMonth;
+        } else if (/^\d{4}$/.test(t)) {
+          y = t;
+        } else if (t.toLowerCase() === 'sekarang') {
+          y = 'Sekarang';
+        }
+      }
+      return { month: m, year: y || str };
+    };
+
     if (parts.length >= 2) {
-      setStartYear(parts[0]);
-      setEndYear(parts[1]);
+      const p1 = parsePeriodPart(parts[0]);
+      const p2 = parsePeriodPart(parts[1]);
+      setStartMonth(p1.month);
+      setStartYear(p1.year);
+      setEndMonth(p2.month);
+      setEndYear(p2.year);
     } else if (parts.length === 1 && parts[0]) {
-      setStartYear(parts[0]);
-      setEndYear(parts[0]);
+      const p1 = parsePeriodPart(parts[0]);
+      setStartMonth(p1.month);
+      setStartYear(p1.year);
+      setEndMonth('');
+      setEndYear(p1.year);
     } else {
+      setStartMonth('');
       setStartYear('');
+      setEndMonth('');
       setEndYear('Sekarang');
     }
 
@@ -411,48 +476,99 @@ export default function AdminExperiencesPage() {
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
                     <label className="block text-xs font-semibold text-on-surface">
-                      Periode Kerja (Tahun) <span className="text-error">*</span>
+                      Periode Kerja (Bulan &amp; Tahun) <span className="text-error">*</span>
                     </label>
-                    {editingItem.period && (
-                      <span className="text-[11px] font-mono text-primary font-bold">
-                        {editingItem.period}
-                      </span>
-                    )}
                   </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="block text-[10px] text-on-surface-variant font-medium mb-1">
-                        Dari (Mulai)
-                      </label>
-                      <select
-                        value={startYear}
-                        onChange={(e) => handlePeriodChange(e.target.value, endYear)}
-                        className="w-full px-2.5 py-2 rounded-lg border border-outline-variant/60 bg-surface text-xs font-mono focus:outline-hidden focus:border-primary"
-                      >
-                        <option value="">Pilih Tahun</option>
-                        {yearOptions.map((y) => (
-                          <option key={y} value={y}>
-                            {y}
-                          </option>
-                        ))}
-                      </select>
+
+                  {/* Pilihan Cepat: Bulan & Tahun */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div className="space-y-1">
+                      <span className="block text-[10px] text-on-surface-variant font-medium">Dari (Mulai):</span>
+                      <div className="grid grid-cols-2 gap-1.5">
+                        <select
+                          value={startMonth}
+                          onChange={(e) =>
+                            handlePeriodComponentChange(
+                              e.target.value,
+                              startYear,
+                              endMonth,
+                              endYear
+                            )
+                          }
+                          className="w-full px-2 py-1.5 rounded-lg border border-outline-variant/60 bg-surface text-xs font-mono focus:outline-hidden focus:border-primary"
+                        >
+                          <option value="">Bulan (Opsional)</option>
+                          {monthOptions.map((m) => (
+                            <option key={m} value={m}>
+                              {m}
+                            </option>
+                          ))}
+                        </select>
+                        <select
+                          value={startYear}
+                          onChange={(e) =>
+                            handlePeriodComponentChange(
+                              startMonth,
+                              e.target.value,
+                              endMonth,
+                              endYear
+                            )
+                          }
+                          className="w-full px-2 py-1.5 rounded-lg border border-outline-variant/60 bg-surface text-xs font-mono focus:outline-hidden focus:border-primary"
+                        >
+                          <option value="">Pilih Tahun</option>
+                          {yearOptions.map((y) => (
+                            <option key={y} value={y}>
+                              {y}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
-                    <div>
-                      <label className="block text-[10px] text-on-surface-variant font-medium mb-1">
-                        Sampai (Selesai)
-                      </label>
-                      <select
-                        value={endYear}
-                        onChange={(e) => handlePeriodChange(startYear, e.target.value)}
-                        className="w-full px-2.5 py-2 rounded-lg border border-outline-variant/60 bg-surface text-xs font-mono focus:outline-hidden focus:border-primary"
-                      >
-                        <option value="Sekarang">Sekarang (Aktif)</option>
-                        {yearOptions.map((y) => (
-                          <option key={y} value={y}>
-                            {y}
-                          </option>
-                        ))}
-                      </select>
+
+                    <div className="space-y-1">
+                      <span className="block text-[10px] text-on-surface-variant font-medium">Sampai (Selesai):</span>
+                      <div className="grid grid-cols-2 gap-1.5">
+                        <select
+                          value={endMonth}
+                          disabled={endYear === 'Sekarang'}
+                          onChange={(e) =>
+                            handlePeriodComponentChange(
+                              startMonth,
+                              startYear,
+                              e.target.value,
+                              endYear
+                            )
+                          }
+                          className="w-full px-2 py-1.5 rounded-lg border border-outline-variant/60 bg-surface text-xs font-mono focus:outline-hidden focus:border-primary disabled:opacity-40"
+                        >
+                          <option value="">Bulan (Opsional)</option>
+                          {monthOptions.map((m) => (
+                            <option key={m} value={m}>
+                              {m}
+                            </option>
+                          ))}
+                        </select>
+                        <select
+                          value={endYear}
+                          onChange={(e) =>
+                            handlePeriodComponentChange(
+                              startMonth,
+                              startYear,
+                              endMonth,
+                              e.target.value
+                            )
+                          }
+                          className="w-full px-2 py-1.5 rounded-lg border border-outline-variant/60 bg-surface text-xs font-mono focus:outline-hidden focus:border-primary"
+                        >
+                          <option value="Sekarang">Sekarang (Aktif)</option>
+                          {yearOptions.map((y) => (
+                            <option key={y} value={y}>
+                              {y}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </div>

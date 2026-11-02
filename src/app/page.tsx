@@ -38,11 +38,11 @@ export default async function HomePage() {
       <main className="w-full pt-20 flex-grow">
         <div className="max-w-[1040px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12 sm:space-y-16">
           <HeroSection profile={profile} />
+          <SkillsSection skills={skills} />
           <ExperienceSection experiences={experiences} />
           <ProjectsSection projects={projects} />
           <CertificationsSection certifications={certifications} />
           <HighlightsSection highlights={highlights} />
-          <SkillsSection skills={skills} />
           <ContactSection profile={profile} />
         </div>
       </main>

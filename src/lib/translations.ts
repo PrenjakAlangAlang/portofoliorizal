@@ -45,7 +45,7 @@ export const uiStrings = {
       badge: 'Metrik Eksplorasi',
     },
     skills: {
-      sectionTitle: 'Keahlian Teknis',
+      sectionTitle: 'Keahlian',
       badge: 'Kompetensi Kunci',
     },
     contact: {

@@ -25,21 +25,6 @@ export default function SkillsSection({ skills }: SkillsSectionProps) {
   const locSkills = getLocalizedSkills(skills, lang, translations);
   const t = uiStrings[lang].skills;
 
-  const getIconColorClass = (iconName: string) => {
-    switch (iconName) {
-      case 'terrain':
-        return 'text-primary';
-      case 'computer':
-        return 'text-secondary';
-      case 'biotech':
-        return 'text-on-surface';
-      case 'verified_user':
-        return 'text-tertiary';
-      default:
-        return 'text-primary';
-    }
-  };
-
   return (
     <section className="space-y-6 pt-10 border-t border-surface-container-high" id="keahlian">
       <ScrollReveal>
@@ -65,14 +50,7 @@ export default function SkillsSection({ skills }: SkillsSectionProps) {
               className="p-4 rounded-xl bg-surface-container-low border border-surface-container-high space-y-3 hover:shadow-xs transition-shadow h-full flex flex-col justify-between"
             >
               <div>
-                <div className="text-sm font-bold text-on-surface flex items-center gap-2 mb-3">
-                  <span
-                    className={`material-symbols-outlined text-base ${getIconColorClass(
-                      skill.icon_name || 'terrain'
-                    )}`}
-                  >
-                    {skill.icon_name || 'terrain'}
-                  </span>
+                <div className="text-sm font-bold text-on-surface mb-3">
                   <span>{skill.category}</span>
                 </div>
 

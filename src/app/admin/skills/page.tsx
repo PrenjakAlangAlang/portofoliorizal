@@ -133,7 +133,7 @@ export default function AdminSkillsPage() {
     <div className="space-y-6 animate-in fade-in duration-200">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-on-surface">Kelola Keahlian Teknis</h1>
+          <h1 className="text-2xl font-bold text-on-surface">Kelola Keahlian</h1>
           <p className="text-xs text-on-surface-variant pt-1">
             Pengelompokan kompetensi geologi: lapangan, software spasial, laboratorium, dan standar K3.
           </p>
@@ -190,41 +190,20 @@ export default function AdminSkillsPage() {
             </div>
 
           <form onSubmit={handleSave} className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-on-surface">
-                  Nama Kategori <span className="text-error">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Geologi Lapangan"
-                  value={editingItem.category || ''}
-                  onChange={(e) =>
-                    setEditingItem({ ...editingItem, category: e.target.value })
-                  }
-                  className="w-full px-3.5 py-2 rounded-lg border border-outline-variant/60 bg-surface text-xs sm:text-sm focus:outline-hidden focus:border-primary font-medium"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-on-surface">
-                  Ikon Domain
-                </label>
-                <select
-                  value={editingItem.icon_name || 'terrain'}
-                  onChange={(e) =>
-                    setEditingItem({ ...editingItem, icon_name: e.target.value })
-                  }
-                  className="w-full px-3.5 py-2 rounded-lg border border-outline-variant/60 bg-surface text-xs sm:text-sm focus:outline-hidden focus:border-primary"
-                >
-                  {availableIcons.map((ico) => (
-                    <option key={ico.name} value={ico.name}>
-                      {ico.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-on-surface">
+                Nama Kategori <span className="text-error">*</span>
+              </label>
+              <input
+                type="text"
+                required
+                placeholder="Geologi Lapangan"
+                value={editingItem.category || ''}
+                onChange={(e) =>
+                  setEditingItem({ ...editingItem, category: e.target.value })
+                }
+                className="w-full px-3.5 py-2 rounded-lg border border-outline-variant/60 bg-surface text-xs sm:text-sm focus:outline-hidden focus:border-primary font-medium"
+              />
             </div>
 
             {/* Sub-items (Pills) Management */}
@@ -313,12 +292,7 @@ export default function AdminSkillsPage() {
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-primary text-xl">
-                      {s.icon_name || 'terrain'}
-                    </span>
-                    <h3 className="font-bold text-sm text-on-surface">{s.category}</h3>
-                  </div>
+                  <h3 className="font-bold text-sm text-on-surface">{s.category}</h3>
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => handleEdit(s)}

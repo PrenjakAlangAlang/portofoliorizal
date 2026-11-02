@@ -34,15 +34,12 @@ export default function Header({ profile }: HeaderProps) {
       <div className="h-20 max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
         {/* Logo / Brand */}
         <Link href="/" className="flex items-center gap-3 flex-shrink-0 group">
-          <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold group-hover:bg-primary group-hover:text-white transition-all shadow-sm">
-            <span className="material-symbols-outlined text-xl">terrain</span>
-          </div>
           <div className="flex flex-col justify-center leading-tight">
             <span className="text-sm sm:text-base font-bold text-on-surface tracking-tight group-hover:text-primary transition-colors">
               {locProfile.name}
             </span>
             <span className="text-[11px] font-mono text-on-surface-variant flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
               {t.roleSubtitle}
             </span>
           </div>
@@ -109,7 +106,7 @@ export default function Header({ profile }: HeaderProps) {
           {/* Download CV button */}
           <a
             href={locProfile.cv_url || '#resume'}
-            className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-primary-container hover:bg-primary text-white text-xs font-medium transition-all shadow-sm active:scale-95"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-primary hover:bg-primary-container text-white text-xs font-semibold transition-all shadow-sm active:scale-95"
           >
             <span className="material-symbols-outlined text-sm leading-none">download</span>
             <span>{t.downloadCv}</span>

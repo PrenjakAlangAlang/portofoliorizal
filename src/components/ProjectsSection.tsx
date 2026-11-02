@@ -82,10 +82,6 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   src={proj.image_url}
                 />
-                <div className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded bg-black/60 backdrop-blur-xs text-[11px] font-mono text-white font-medium flex items-center gap-1">
-                  <span className="material-symbols-outlined text-xs">schedule</span>
-                  <span>{proj.duration}</span>
-                </div>
               </div>
 
               {/* Content Body */}
