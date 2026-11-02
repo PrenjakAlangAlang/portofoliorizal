@@ -63,6 +63,7 @@ export default function ProjectPresentationModal({
 
   const viewerRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const backdropMouseDownRef = useRef<boolean>(false);
 
   // Ref for totalPages so keyboard navigation never forces effect resets
   const totalPagesRef = useRef<number>(totalPages);
@@ -85,11 +86,16 @@ export default function ProjectPresentationModal({
   // Keyboard navigation (Escape, ArrowRight, ArrowLeft) - decoupled from state resets
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onClose();
+      }
       if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+        e.preventDefault();
         setCurrentPage((p) => Math.min(totalPagesRef.current, p + 1));
       }
       if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
         setCurrentPage((p) => Math.max(1, p - 1));
       }
     };
@@ -192,11 +198,15 @@ export default function ProjectPresentationModal({
 
   const isEn = lang === 'en';
 
-  const handlePrevSlide = () => {
+  const handlePrevSlide = (e?: React.MouseEvent) => {
+    e?.preventDefault();
+    e?.stopPropagation();
     setCurrentPage((p) => Math.max(1, p - 1));
   };
 
-  const handleNextSlide = () => {
+  const handleNextSlide = (e?: React.MouseEvent) => {
+    e?.preventDefault();
+    e?.stopPropagation();
     setCurrentPage((p) => (totalPages > 1 ? Math.min(totalPages, p + 1) : p + 1));
   };
 
@@ -362,13 +372,21 @@ export default function ProjectPresentationModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm overflow-y-auto p-2 sm:p-4 md:p-6 flex justify-center items-start animate-in fade-in duration-200"
+      className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm overflow-y-auto p-2 sm:p-4 md:p-6 flex justify-center items-start animate-in fade-in duration-200"
+      onMouseDown={(e) => {
+        backdropMouseDownRef.current = e.target === e.currentTarget;
+      }}
       onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
+        if (e.target === e.currentTarget && backdropMouseDownRef.current) {
+          e.preventDefault();
+          e.stopPropagation();
+          onClose();
+        }
       }}
     >
       <div
         className="w-full max-w-5xl my-3 sm:my-6 bg-surface-container-lowest text-on-surface border border-surface-container-high rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col transition-all relative font-sans"
+        onMouseDown={(e) => e.stopPropagation()}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Geological Wave Top Banner */}
@@ -419,7 +437,11 @@ export default function ProjectPresentationModal({
 
           {/* Close Button */}
           <button
-            onClick={onClose}
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }}
             className="absolute top-4 right-4 z-20 w-8 h-8 rounded-lg bg-surface-container/90 hover:bg-surface-container text-on-surface border border-surface-container-high flex items-center justify-center transition-all shadow-sm active:scale-95 cursor-pointer"
             title={isEn ? 'Close (Esc)' : 'Tutup (Esc)'}
           >
@@ -679,31 +701,42 @@ export default function ProjectPresentationModal({
                         transformOrigin: 'center center',
                       }}
                     >
-                      <Document
-                        file={effectivePdfUrl}
-                        onLoadSuccess={({ numPages }) => {
-                          setTotalPages(numPages);
-                          setDocLoading(false);
-                          setDocError(null);
-                        }}
-                        onLoadError={(err) => {
-                          console.warn('react-pdf document load error:', err);
-                          setDocLoading(false);
-                          setDocError('Gagal memproses dokumen dengan plugin react-pdf.');
-                        }}
-                        loading={null}
-                        className="flex items-center justify-center"
-                      >
-                        <Page
-                          pageNumber={currentPage}
-                          width={pageWidth}
-                          renderAnnotationLayer={false}
-                          renderTextLayer={false}
-                          className="rounded-xl shadow-2xl overflow-hidden border border-neutral-200 bg-white"
+                      <React.Suspense fallback={null}>
+                        <Document
+                          file={effectivePdfUrl}
+                          onLoadSuccess={({ numPages }) => {
+                            setTotalPages(numPages);
+                            setDocLoading(false);
+                            setDocError(null);
+                          }}
+                          onLoadError={(err) => {
+                            console.warn('react-pdf document load error:', err);
+                            setDocLoading(false);
+                            setDocError('Gagal memproses dokumen dengan plugin react-pdf.');
+                          }}
                           loading={null}
-                          onRenderSuccess={() => setDocLoading(false)}
-                        />
-                      </Document>
+                          className="flex items-center justify-center"
+                        >
+                          <Page
+                            pageNumber={currentPage}
+                            width={pageWidth}
+                            renderAnnotationLayer={false}
+                            renderTextLayer={false}
+                            suspense={false}
+                            className="rounded-xl shadow-2xl overflow-hidden border border-neutral-200 bg-white"
+                            loading={null}
+                            onRenderSuccess={() => setDocLoading(false)}
+                            onLoadError={(err) => {
+                              console.warn('react-pdf page load error:', err);
+                              setDocLoading(false);
+                            }}
+                            onRenderError={(err) => {
+                              console.warn('react-pdf page render error:', err);
+                              setDocLoading(false);
+                            }}
+                          />
+                        </Document>
+                      </React.Suspense>
                     </div>
                   )}
 
@@ -726,6 +759,7 @@ export default function ProjectPresentationModal({
                     <div className="absolute bottom-4 left-4 right-4 z-10 p-3 rounded-xl bg-error-container/80 text-error border border-error-container text-xs flex items-center justify-between">
                       <span>{docError}</span>
                       <button
+                        type="button"
                         onClick={handleOpenDoc}
                         className="underline font-bold text-xs ml-2 cursor-pointer"
                       >
@@ -740,7 +774,8 @@ export default function ProjectPresentationModal({
                   {/* Left: Previous, Page Number, Next */}
                   <div className="flex items-center gap-1.5 sm:gap-2">
                     <button
-                      onClick={handlePrevSlide}
+                      type="button"
+                      onClick={(e) => handlePrevSlide(e)}
                       disabled={currentPage <= 1 || docLoading || convertingPpt}
                       className="px-3 py-1.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-[#1a1e24] hover:bg-neutral-100 dark:hover:bg-neutral-800 text-xs font-semibold text-neutral-800 dark:text-neutral-200 transition-colors flex items-center gap-1 shadow-2xs disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                       title="Slide/Halaman Sebelumnya (Panah Kiri)"
@@ -754,7 +789,8 @@ export default function ProjectPresentationModal({
                     </div>
 
                     <button
-                      onClick={handleNextSlide}
+                      type="button"
+                      onClick={(e) => handleNextSlide(e)}
                       disabled={currentPage >= totalPages || docLoading || convertingPpt}
                       className="px-3 py-1.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-[#1a1e24] hover:bg-neutral-100 dark:hover:bg-neutral-800 text-xs font-semibold text-neutral-800 dark:text-neutral-200 transition-colors flex items-center gap-1 shadow-2xs disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                       title="Slide/Halaman Berikutnya (Panah Kanan)"
@@ -769,6 +805,7 @@ export default function ProjectPresentationModal({
                     <div className="w-px h-6 bg-neutral-200 dark:bg-neutral-700 hidden sm:block"></div>
 
                     <button
+                      type="button"
                       onClick={handleZoomOut}
                       className="w-8 h-8 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-[#1a1e24] hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-800 dark:text-neutral-200 transition-colors flex items-center justify-center font-bold text-sm shadow-2xs font-mono cursor-pointer"
                       title="Zoom Out"
@@ -777,6 +814,7 @@ export default function ProjectPresentationModal({
                     </button>
 
                     <button
+                      type="button"
                       onClick={() => setZoom(100)}
                       className="px-2.5 h-8 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-[#1a1e24] text-xs font-mono font-medium text-neutral-800 dark:text-neutral-200 flex items-center justify-center min-w-[54px] shadow-2xs cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800"
                       title="Reset Zoom ke 100%"
@@ -785,6 +823,7 @@ export default function ProjectPresentationModal({
                     </button>
 
                     <button
+                      type="button"
                       onClick={handleZoomIn}
                       className="w-8 h-8 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-[#1a1e24] hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-800 dark:text-neutral-200 transition-colors flex items-center justify-center font-bold text-sm shadow-2xs font-mono cursor-pointer"
                       title="Zoom In"
@@ -798,6 +837,7 @@ export default function ProjectPresentationModal({
                     <div className="w-px h-6 bg-neutral-200 dark:bg-neutral-700 hidden sm:block"></div>
 
                     <button
+                      type="button"
                       onClick={toggleFullscreen}
                       className="px-3 h-8 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-[#1a1e24] hover:bg-neutral-100 dark:hover:bg-neutral-800 text-xs font-medium text-neutral-800 dark:text-neutral-200 transition-colors flex items-center gap-1.5 shadow-2xs cursor-pointer"
                       title="Layar Penuh"
@@ -809,6 +849,7 @@ export default function ProjectPresentationModal({
                     </button>
 
                     <button
+                      type="button"
                       onClick={handleOpenDoc}
                       className="px-3 h-8 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-[#1a1e24] hover:bg-neutral-100 dark:hover:bg-neutral-800 text-xs font-medium text-neutral-800 dark:text-neutral-200 transition-colors flex items-center gap-1.5 shadow-2xs cursor-pointer"
                       title="Buka Dokumen PDF di Tab Baru"
@@ -818,6 +859,7 @@ export default function ProjectPresentationModal({
                     </button>
 
                     <button
+                      type="button"
                       onClick={handleDownload}
                       disabled={downloading}
                       className="px-3.5 h-8 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-[#1a1e24] hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-800 dark:text-neutral-200 text-xs font-medium transition-colors flex items-center gap-1.5 shadow-2xs disabled:opacity-50 cursor-pointer"
