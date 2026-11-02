@@ -15,9 +15,14 @@ const geologicalGlossary: Record<string, string> = {
   'Pemetaan': 'Mapping',
   'Alterasi Hidrotermal': 'Hydrothermal Alteration',
   'Geologi Lapangan': 'Field Geology',
+  'Laboratorium': 'Laboratory',
   'Laboratorium & Petrografi': 'Laboratory & Petrography',
   'Perangkat Lunak & GIS': 'Software & GIS',
+  'Software & GIS': 'Software & GIS',
   'K3 & Regulasi Tambang': 'HSE & Mining Compliance',
+  'Kepatuhan & K3': 'Compliance & HSE',
+  'Keahlian': 'Skills',
+  'Keahlian Teknis': 'Technical Skills',
 };
 
 async function translateSingle(text: string, from = 'id', to = 'en'): Promise<string> {

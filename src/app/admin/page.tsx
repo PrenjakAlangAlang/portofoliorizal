@@ -25,6 +25,13 @@ export default async function AdminDashboardPage() {
 
   const stats = [
     {
+      label: 'Kategori Keahlian',
+      count: skills.length,
+      icon: 'build',
+      href: '/admin/skills',
+      color: 'bg-primary-container/20 text-primary',
+    },
+    {
       label: 'Pengalaman Kerja',
       count: experiences.length,
       icon: 'history_edu',
@@ -51,13 +58,6 @@ export default async function AdminDashboardPage() {
       icon: 'insights',
       href: '/admin/highlights',
       color: 'bg-primary/10 text-primary',
-    },
-    {
-      label: 'Kategori Keahlian',
-      count: skills.length,
-      icon: 'build',
-      href: '/admin/skills',
-      color: 'bg-primary-container/20 text-primary',
     },
     {
       label: 'Pesan Masuk',

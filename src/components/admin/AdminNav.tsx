@@ -15,11 +15,11 @@ export default function AdminNav() {
   const links = [
     { href: '/admin', label: 'Ringkasan Dashboard', icon: 'dashboard' },
     { href: '/admin/profile', label: 'Profil Saya', icon: 'person' },
+    { href: '/admin/skills', label: 'Keahlian', icon: 'build' },
     { href: '/admin/experiences', label: 'Pengalaman Kerja', icon: 'history_edu' },
     { href: '/admin/projects', label: 'Pengalaman Proyek', icon: 'explore' },
     { href: '/admin/certifications', label: 'Sertifikasi & Pelatihan', icon: 'workspace_premium' },
     { href: '/admin/highlights', label: 'Pencapaian & Sorotan', icon: 'insights' },
-    { href: '/admin/skills', label: 'Keahlian Teknis', icon: 'build' },
     { href: '/admin/contact', label: 'Hubungi Saya & Pesan', icon: 'mail' },
     { href: '/admin/account', label: 'Keamanan Akun', icon: 'manage_accounts' },
   ];

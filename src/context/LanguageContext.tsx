@@ -20,7 +20,7 @@ interface LanguageContextType {
   registerTexts: (texts: (string | undefined | null)[]) => void;
 }
 
-const CACHE_KEY = 'geo_portfolio_translations_v2';
+const CACHE_KEY = 'geo_portfolio_translations_v3';
 
 const LanguageContext = createContext<LanguageContextType>({
   lang: 'id',

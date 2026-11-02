@@ -21,11 +21,11 @@ export default function Header({ profile }: HeaderProps) {
 
   const navLinks = [
     { href: '#tentang', label: t.about },
+    { href: '#keahlian', label: t.skills },
     { href: '#pengalaman', label: t.experience },
     { href: '#proyek', label: t.projects },
     { href: '#pelatihan', label: t.certifications },
     { href: '#sorotan', label: t.highlights },
-    { href: '#keahlian', label: t.skills },
     { href: '#kontak', label: t.contact },
   ];
 

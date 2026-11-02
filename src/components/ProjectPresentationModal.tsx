@@ -474,7 +474,7 @@ export default function ProjectPresentationModal({
               {project.title}
             </h1>
 
-            <p className="text-xs sm:text-sm md:text-base text-on-surface-variant leading-relaxed max-w-4xl">
+            <p className="text-xs sm:text-sm md:text-base text-on-surface-variant leading-relaxed max-w-4xl text-justify">
               {project.description}
             </p>
 

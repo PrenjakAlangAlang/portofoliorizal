@@ -99,7 +99,7 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
                     {proj.title}
                   </h3>
 
-                  <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
+                  <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed text-justify">
                     {proj.description}
                   </p>
                 </div>

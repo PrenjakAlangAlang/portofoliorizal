@@ -33,7 +33,7 @@ export default function AdminSkillsPage() {
         setLoading(false);
       })
       .catch(() => {
-        setFeedback({ type: 'error', text: 'Gagal memuat keahlian teknis.' });
+        setFeedback({ type: 'error', text: 'Gagal memuat keahlian.' });
         setLoading(false);
       });
   };
@@ -115,7 +115,7 @@ export default function AdminSkillsPage() {
       });
 
       if (res.ok) {
-        setFeedback({ type: 'success', text: 'Keahlian teknis berhasil disimpan.' });
+        setFeedback({ type: 'success', text: 'Keahlian berhasil disimpan.' });
         setEditingItem(null);
         loadData();
       } else {
@@ -277,7 +277,7 @@ export default function AdminSkillsPage() {
       {/* Grid of Skill Categories */}
       {loading ? (
         <div className="p-8 text-center text-xs font-mono text-on-surface-variant">
-          Memuat keahlian teknis...
+          Memuat keahlian...
         </div>
       ) : skills.length === 0 ? (
         <div className="p-8 text-center text-xs text-on-surface-variant bg-surface-container-lowest rounded-xl border border-surface-container-high">

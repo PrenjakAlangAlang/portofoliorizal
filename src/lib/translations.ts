@@ -120,8 +120,8 @@ export const uiStrings = {
       badge: 'Exploration & Academic Metrics',
     },
     skills: {
-      sectionTitle: 'Technical Competencies',
-      badge: 'Core Capabilities',
+      sectionTitle: 'Skills',
+      badge: 'Key Competencies',
     },
     contact: {
       sectionTitle: 'Contact Me',
