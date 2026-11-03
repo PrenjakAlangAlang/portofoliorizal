@@ -341,7 +341,7 @@ export default function ProjectPresentationModal({
           'Integrasi data geologi lapangan, petrofisika sumur, dan penampang seismik komprehensif.',
           'Pemodelan dan evaluasi 6 volume atribut elastis properti reservoir utama.',
           'Korelasi quality control inversi tinggi mencapai akurasi optimal (R > 0.90).',
-          `Deliverable terverifikasi: ${project.deliverable || 'Peta Geologi & Laporan Akhir'}.`,
+          'Laporan akhir dan dokumentasi komprehensif berhasil diverifikasi.',
         ];
 
   const keyFindings =
@@ -478,15 +478,8 @@ export default function ProjectPresentationModal({
               {project.description}
             </p>
 
-            {/* Keyword / Category Pills & Deliverable */}
+            {/* Keyword / Category Pills */}
             <div className="flex flex-wrap items-center gap-2 pt-2">
-              {project.deliverable && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono font-semibold bg-primary-fixed/30 text-primary border border-primary-fixed">
-                  <span className="material-symbols-outlined text-sm">task_alt</span>
-                  <span>Deliverable: {project.deliverable}</span>
-                </span>
-              )}
-
               {project.tags &&
                 project.tags.map((tag, i) => (
                   <span

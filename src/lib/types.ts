@@ -101,7 +101,7 @@ export interface Project {
   duration_en?: string;
   description: string;
   description_en?: string;
-  deliverable: string;
+  deliverable?: string;
   deliverable_en?: string;
   deliverable_color?: 'primary' | 'secondary' | 'tertiary' | 'error';
   tags?: string[];

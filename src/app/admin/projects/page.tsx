@@ -445,46 +445,6 @@ export default function AdminProjectsPage() {
                   className="w-full px-3.5 py-2 rounded-lg border border-outline-variant/60 bg-surface text-xs sm:text-sm focus:outline-hidden focus:border-primary leading-relaxed"
                 />
               </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-semibold text-on-surface">
-                    Target Deliverable / Output Utama
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Contoh: Model Inversi 3D & Rekomendasi Pemboran"
-                    value={editingItem.deliverable || ''}
-                    onChange={(e) => setEditingItem({ ...editingItem, deliverable: e.target.value })}
-                    className="w-full px-3.5 py-2 rounded-lg border border-outline-variant/60 bg-surface text-xs sm:text-sm font-mono focus:outline-hidden focus:border-primary"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-semibold text-on-surface">
-                    Warna Indikator Deliverable
-                  </label>
-                  <select
-                    value={editingItem.deliverable_color || 'primary'}
-                    onChange={(e) =>
-                      setEditingItem({
-                        ...editingItem,
-                        deliverable_color: e.target.value as
-                          | 'primary'
-                          | 'secondary'
-                          | 'tertiary'
-                          | 'error',
-                      })
-                    }
-                    className="w-full px-3.5 py-2 rounded-lg border border-outline-variant/60 bg-surface text-xs sm:text-sm focus:outline-hidden focus:border-primary"
-                  >
-                    <option value="primary">Ochre / Terra-Cotta (Primary)</option>
-                    <option value="secondary">Slate Navy (Secondary)</option>
-                    <option value="tertiary">Lichen Green (Tertiary)</option>
-                    <option value="error">Hematite Red (Error/Warning)</option>
-                  </select>
-                </div>
-              </div>
             </div>
 
             {/* Bagian 2: Upload Foto Lapangan & Tags */}
@@ -921,7 +881,7 @@ export default function AdminProjectsPage() {
 
                 <div className="pt-3 border-t border-surface-container-high flex items-center justify-between gap-2">
                   <span className="text-[10px] font-mono text-on-surface-variant truncate">
-                    {proj.deliverable}
+                    {proj.duration}
                   </span>
                   <div className="flex items-center gap-1.5 flex-shrink-0">
                     <button

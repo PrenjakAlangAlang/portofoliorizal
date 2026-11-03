@@ -373,6 +373,8 @@ export async function saveProject(item: Project): Promise<Project> {
   for (const k of allowedKeys) {
     if (record[k] !== undefined) dbPayload[k] = record[k];
   }
+  if (!dbPayload['deliverable']) dbPayload['deliverable'] = '-';
+  if (!dbPayload['deliverable_color']) dbPayload['deliverable_color'] = 'primary';
 
   if (isSupabaseConfigured()) {
     const client = getAdminSupabase();

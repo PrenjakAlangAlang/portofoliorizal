@@ -24,7 +24,6 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
     projects.forEach((proj) => {
       if (proj.title) allTexts.push(proj.title);
       if (proj.description) allTexts.push(proj.description);
-      if (proj.deliverable) allTexts.push(proj.deliverable);
       if (proj.location) allTexts.push(proj.location);
       if (proj.duration) allTexts.push(proj.duration);
       if (proj.tags) allTexts.push(...proj.tags);
@@ -35,20 +34,6 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
   const locProjects = getLocalizedProjects(projects, lang, translations);
   const t = uiStrings[lang].projects;
   const [activePresentationProject, setActivePresentationProject] = useState<Project | null>(null);
-
-  const getDeliverableColorClass = (color?: string) => {
-    switch (color) {
-      case 'secondary':
-        return 'text-secondary bg-secondary-container/40 border-secondary-container';
-      case 'tertiary':
-        return 'text-tertiary bg-tertiary-container/20 border-tertiary-container';
-      case 'error':
-        return 'text-error bg-error-container/40 border-error-container';
-      case 'primary':
-      default:
-        return 'text-primary bg-primary-fixed/40 border-primary-fixed';
-    }
-  };
 
   return (
     <section className="space-y-6 pt-10 border-t border-surface-container-high" id="proyek">
@@ -104,7 +89,7 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
                   </p>
                 </div>
 
-                {/* Tags & Deliverable */}
+                {/* Tags */}
                 <div className="pt-3 space-y-2 border-t border-surface-container-high/50">
                   {proj.tags && proj.tags.length > 0 && (
                     <div className="flex flex-wrap gap-1.5">
@@ -118,15 +103,6 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
                       ))}
                     </div>
                   )}
-
-                  <div
-                    className={`text-xs font-mono font-medium px-2.5 py-1.5 rounded-lg border ${getDeliverableColorClass(
-                      proj.deliverable_color
-                    )} flex items-center gap-1.5`}
-                  >
-                    <span className="material-symbols-outlined text-sm">task_alt</span>
-                    <span className="truncate">{t.deliverableLabel}: {proj.deliverable}</span>
-                  </div>
 
                   {/* Tombol Lihat Proyek (bergaya seperti Lihat Kredensial) */}
                   <div className="pt-2 border-t border-surface-container-high/40">

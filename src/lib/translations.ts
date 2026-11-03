@@ -51,17 +51,17 @@ export const uiStrings = {
     contact: {
       sectionTitle: 'Hubungi Saya',
       sectionSubtitle:
-        'Terbuka untuk konsultasi eksplorasi mineral, pemetaan geologi lapangan, proyek pemodelan 3D, atau kolaborasi penelitian geologi.',
+        'Mari terhubung dan berkolaborasi dalam berbagai peluang di bidang geologi, eksplorasi, dan pemodelan geologi. Saya terbuka untuk diskusi, kolaborasi, maupun kesempatan profesional. Silakan hubungi saya.',
       emailLabel: 'Email',
       waLabel: 'WhatsApp / Kontak',
       domicileLabel: 'Domisili Operasional',
       formTitle: 'Kirim Pesan Langsung',
       formSubtitle:
         'Isi formulir di bawah ini untuk mengirim pertanyaan atau penawaran kerja sama.',
-      namePlaceholder: 'Contoh: Ir. Budi Santoso',
+      namePlaceholder: 'Contoh: Nama anda',
       emailPlaceholder: 'nama@perusahaan.co.id',
       phonePlaceholder: '+62 81...',
-      subjectPlaceholder: 'Eksplorasi Proyek / Penawaran Konsultansi',
+      subjectPlaceholder: 'Kerja Sama / Penawaran Profesional',
       messagePlaceholder: 'Tuliskan rincian kebutuhan proyek atau pesan Anda...',
       nameLabel: 'Nama Lengkap',
       phoneLabel: 'No. Telepon / WhatsApp (Opsional)',
@@ -126,17 +126,17 @@ export const uiStrings = {
     contact: {
       sectionTitle: 'Contact Me',
       sectionSubtitle:
-        'Open for mineral exploration consulting, field outcrop mapping, 3D modeling projects, and geological research collaboration.',
+        'I welcome opportunities to connect and collaborate in the fields of geology, exploration, and geological modeling. I am open to discussions, collaborations, and professional opportunities. Feel free to reach out to me.',
       emailLabel: 'Email',
       waLabel: 'WhatsApp / Mobile',
       domicileLabel: 'Operational Base',
       formTitle: 'Send a Direct Message',
       formSubtitle:
         'Fill in the form below to submit project inquiries or collaboration proposals.',
-      namePlaceholder: 'e.g., Dr. Johnathan Smith',
+      namePlaceholder: 'Example: Your Name',
       emailPlaceholder: 'name@organization.com',
       phonePlaceholder: '+62 / +1...',
-      subjectPlaceholder: 'Exploration Project / Consulting Inquiry',
+      subjectPlaceholder: 'Collaboration / Professional Opportunities',
       messagePlaceholder: 'Describe your project requirements or proposal...',
       nameLabel: 'Full Name',
       phoneLabel: 'Phone / WhatsApp (Optional)',
