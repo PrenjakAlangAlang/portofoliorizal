@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Experience } from '@/lib/types';
+import { uploadFileWithProgress } from '@/lib/upload-helper';
 
 export default function AdminExperiencesPage() {
   const currentYear = new Date().getFullYear();
@@ -18,6 +19,7 @@ export default function AdminExperiencesPage() {
   const [skillInput, setSkillInput] = useState('');
   const [saving, setSaving] = useState(false);
   const [uploadingDoc, setUploadingDoc] = useState(false);
+  const [docUploadProgress, setDocUploadProgress] = useState<number | null>(null);
   const [startMonth, setStartMonth] = useState<string>('');
   const [startYear, setStartYear] = useState<string>('');
   const [endMonth, setEndMonth] = useState<string>('');
@@ -247,18 +249,19 @@ export default function AdminExperiencesPage() {
   };
 
   const handleDocUpload = async (file: File) => {
-    // Validasi ukuran berkas maksimal 100 MB
-    const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100 MB
+    // Validasi ukuran berkas maksimal 50 MB (batas Supabase Free Tier)
+    const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 MB
     if (file.size > MAX_FILE_SIZE) {
       const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
       setFeedback({
         type: 'error',
-        text: `Ukuran berkas (${sizeMb} MB) melebihi batas maksimal 100 MB. Silakan pilih berkas yang lebih kecil.`,
+        text: `Ukuran berkas (${sizeMb} MB) melebihi batas maksimal 50 MB. Silakan pilih berkas yang lebih kecil.`,
       });
       return;
     }
 
     setUploadingDoc(true);
+    setDocUploadProgress(0);
     setFeedback(null);
 
     try {
@@ -278,16 +281,12 @@ export default function AdminExperiencesPage() {
         fileToUpload = new File([pdfBlob], newFileName, { type: 'application/pdf' });
       }
 
-      const formData = new FormData();
-      formData.append('file', fileToUpload);
-
-      const res = await fetch('/api/admin/upload', {
-        method: 'POST',
-        body: formData,
+      setFeedback(null);
+      const data = await uploadFileWithProgress(fileToUpload, (percent) => {
+        setDocUploadProgress(percent);
       });
 
-      const data = await res.json();
-      if (res.ok && data.url) {
+      if (data && data.url) {
         setEditingItem((prev) =>
           prev
             ? {
@@ -303,20 +302,17 @@ export default function AdminExperiencesPage() {
             ? `Berkas PPT "${file.name}" berhasil dikonversi dan disimpan sebagai PDF!`
             : `Berkas "${file.name}" berhasil diunggah!`,
         });
-      } else {
-        setFeedback({
-          type: 'error',
-          text: data.error || 'Gagal mengunggah berkas dokumentasi.',
-        });
       }
     } catch (err: unknown) {
       console.warn('Upload error:', err);
+      const msg = err instanceof Error ? err.message : 'Terjadi kesalahan saat memproses atau mengunggah berkas.';
       setFeedback({
         type: 'error',
-        text: 'Terjadi kesalahan saat memproses atau mengunggah berkas.',
+        text: msg,
       });
     } finally {
       setUploadingDoc(false);
+      setDocUploadProgress(null);
     }
   };
 
@@ -692,7 +688,7 @@ export default function AdminExperiencesPage() {
                 </div>
               </div>
 
-              {/* Berkas Dokumentasi Kerja / Slide Viewer (PPT / PDF, Maks. 100 MB) */}
+              {/* Berkas Dokumentasi Kerja / Slide Viewer (PPT / PDF, Maks. 50 MB) */}
               <div className="space-y-3 p-4 rounded-xl bg-surface border border-outline-variant/60">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-semibold text-on-surface flex items-center gap-1.5">
@@ -700,7 +696,7 @@ export default function AdminExperiencesPage() {
                     <span>Berkas Dokumentasi Kerja / Slide Viewer (PPT / PDF)</span>
                   </label>
                   <span className="text-[10px] font-mono text-on-surface-variant">
-                    Format didukung: .pdf, .ppt, .pptx (Maks. 100 MB)
+                    Format didukung: .pdf, .ppt, .pptx (Maks. 50 MB)
                   </span>
                 </div>
 
@@ -720,10 +716,18 @@ export default function AdminExperiencesPage() {
                     type="button"
                     disabled={uploadingDoc}
                     onClick={() => docInputRef.current?.click()}
-                    className="px-4 py-2 rounded-lg bg-surface-container-high hover:bg-surface-variant text-xs font-semibold text-on-surface flex items-center gap-2 border border-outline-variant/60 transition-all disabled:opacity-50 cursor-pointer"
+                    className="px-4 py-2 rounded-lg bg-surface-container-high hover:bg-surface-variant text-xs font-semibold text-on-surface flex items-center gap-2 border border-outline-variant/60 transition-all disabled:opacity-50 cursor-pointer shrink-0"
                   >
-                    <span className="material-symbols-outlined text-sm">upload_file</span>
-                    <span>{uploadingDoc ? 'Mengunggah Berkas...' : 'Unggah File PPT / PDF'}</span>
+                    <span className={`material-symbols-outlined text-sm ${uploadingDoc ? 'animate-spin' : ''}`}>
+                      {uploadingDoc ? 'sync' : 'upload_file'}
+                    </span>
+                    <span>
+                      {uploadingDoc
+                        ? docUploadProgress !== null
+                          ? `Mengunggah... ${docUploadProgress}%`
+                          : 'Memproses Berkas...'
+                        : 'Unggah File PPT / PDF'}
+                    </span>
                   </button>
 
                   {editingItem.document_url ? (
@@ -762,6 +766,27 @@ export default function AdminExperiencesPage() {
                     </span>
                   )}
                 </div>
+
+                {/* Progress Bar Loading 0-100% */}
+                {uploadingDoc && docUploadProgress !== null && (
+                  <div className="w-full space-y-1.5 pt-2 animate-in fade-in duration-200">
+                    <div className="flex justify-between items-center text-xs font-mono">
+                      <span className="text-primary font-semibold flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+                        {docUploadProgress < 100
+                          ? `Mengunggah berkas ke server... (${docUploadProgress}%)`
+                          : 'Menyimpan berkas di server... 100%'}
+                      </span>
+                      <span className="text-on-surface font-bold font-mono">{docUploadProgress}%</span>
+                    </div>
+                    <div className="w-full h-2 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant/40">
+                      <div
+                        className="h-full bg-primary rounded-full transition-all duration-150 ease-out shadow-xs"
+                        style={{ width: `${docUploadProgress}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="flex justify-end gap-2 pt-2 border-t border-surface-container-high">

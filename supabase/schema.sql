@@ -153,11 +153,11 @@ DROP POLICY IF EXISTS "Full access for service role on admin_credentials" ON pub
 CREATE POLICY "Full access for service role on admin_credentials" ON public.admin_credentials USING (true) WITH CHECK (true);
 
 -- =======================================================
--- STORAGE BUCKET FOR FILE UPLOADS (Foto Profil, Foto Proyek, Berkas CV)
+-- STORAGE BUCKET FOR FILE UPLOADS (Foto Profil, Foto Proyek, Berkas CV, Presentasi Slide)
 -- =======================================================
-INSERT INTO storage.buckets (id, name, public)
-VALUES ('portfolio', 'portfolio', true)
-ON CONFLICT (id) DO UPDATE SET public = true;
+INSERT INTO storage.buckets (id, name, public, file_size_limit)
+VALUES ('portfolio', 'portfolio', true, 52428800)
+ON CONFLICT (id) DO UPDATE SET public = true, file_size_limit = 52428800;
 
 DROP POLICY IF EXISTS "Public can view portfolio assets" ON storage.objects;
 CREATE POLICY "Public can view portfolio assets" ON storage.objects FOR SELECT USING (bucket_id = 'portfolio');

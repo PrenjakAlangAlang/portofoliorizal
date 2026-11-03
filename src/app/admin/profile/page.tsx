@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Profile } from '@/lib/types';
+import { uploadFileWithProgress } from '@/lib/upload-helper';
 
 export default function AdminProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -9,6 +10,7 @@ export default function AdminProfilePage() {
   const [saving, setSaving] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [uploadingCv, setUploadingCv] = useState(false);
+  const [cvUploadProgress, setCvUploadProgress] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<{
     type: 'success' | 'error';
     text: string;
@@ -44,21 +46,31 @@ export default function AdminProfilePage() {
   };
 
   const handleFileUpload = async (file: File, type: 'avatar' | 'cv') => {
-    const formData = new FormData();
-    formData.append('file', file);
+    // Validasi ukuran berkas maksimal 50 MB
+    const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 MB
+    if (file.size > MAX_FILE_SIZE) {
+      const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
+      setFeedback({
+        type: 'error',
+        text: `Ukuran berkas (${sizeMb} MB) melebihi batas maksimal 50 MB. Silakan pilih berkas yang lebih kecil.`,
+      });
+      return;
+    }
 
-    if (type === 'avatar') setUploadingAvatar(true);
-    else setUploadingCv(true);
+    if (type === 'avatar') {
+      setUploadingAvatar(true);
+    } else {
+      setUploadingCv(true);
+      setCvUploadProgress(0);
+    }
     setFeedback(null);
 
     try {
-      const res = await fetch('/api/admin/upload', {
-        method: 'POST',
-        body: formData,
+      const data = await uploadFileWithProgress(file, (percent) => {
+        if (type === 'cv') setCvUploadProgress(percent);
       });
 
-      const data = await res.json();
-      if (res.ok && data.url) {
+      if (data && data.url) {
         if (type === 'avatar') {
           setProfile((prev) => (prev ? { ...prev, avatar_url: data.url } : null));
           setFeedback({ type: 'success', text: 'Foto profil berhasil diunggah!' });
@@ -66,14 +78,17 @@ export default function AdminProfilePage() {
           setProfile((prev) => (prev ? { ...prev, cv_url: data.url } : null));
           setFeedback({ type: 'success', text: 'Dokumen CV berhasil diunggah!' });
         }
-      } else {
-        setFeedback({ type: 'error', text: data.error || 'Gagal mengunggah berkas.' });
       }
-    } catch {
-      setFeedback({ type: 'error', text: 'Terjadi kesalahan saat mengunggah file.' });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Terjadi kesalahan saat mengunggah file.';
+      setFeedback({ type: 'error', text: msg });
     } finally {
-      if (type === 'avatar') setUploadingAvatar(false);
-      else setUploadingCv(false);
+      if (type === 'avatar') {
+        setUploadingAvatar(false);
+      } else {
+        setUploadingCv(false);
+        setCvUploadProgress(null);
+      }
     }
   };
 
@@ -305,13 +320,42 @@ export default function AdminProfilePage() {
                     onClick={() => cvInputRef.current?.click()}
                     className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-secondary hover:bg-on-surface text-white text-xs font-semibold transition-all shadow-xs disabled:opacity-50"
                   >
-                    <span className="material-symbols-outlined text-base">upload</span>
-                    <span>{uploadingCv ? 'Mengunggah CV...' : 'Pilih File CV (PDF)'}</span>
+                    <span className={`material-symbols-outlined text-base ${uploadingCv ? 'animate-spin' : ''}`}>
+                      {uploadingCv ? 'sync' : 'upload'}
+                    </span>
+                    <span>
+                      {uploadingCv
+                        ? cvUploadProgress !== null
+                          ? `Mengunggah CV... ${cvUploadProgress}%`
+                          : 'Mengunggah CV...'
+                        : 'Pilih File CV (PDF)'}
+                    </span>
                   </button>
                   <span className="text-[10px] text-on-surface-variant font-mono">
-                    Format: PDF, DOCX
+                    Format: PDF, DOCX (Maks 50 MB)
                   </span>
                 </div>
+
+                {/* Progress Bar Loading 0-100% untuk CV */}
+                {uploadingCv && cvUploadProgress !== null && (
+                  <div className="w-full space-y-1.5 pt-1 animate-in fade-in duration-200">
+                    <div className="flex justify-between items-center text-xs font-mono">
+                      <span className="text-secondary font-semibold flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-secondary animate-ping"></span>
+                        {cvUploadProgress < 100
+                          ? `Mengunggah CV ke server... (${cvUploadProgress}%)`
+                          : 'Menyimpan berkas di server... 100%'}
+                      </span>
+                      <span className="text-on-surface font-bold font-mono">{cvUploadProgress}%</span>
+                    </div>
+                    <div className="w-full h-2 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant/40">
+                      <div
+                        className="h-full bg-secondary rounded-full transition-all duration-150 ease-out shadow-xs"
+                        style={{ width: `${cvUploadProgress}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
