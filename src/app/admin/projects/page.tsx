@@ -134,26 +134,29 @@ export default function AdminProjectsPage() {
   };
 
   const handleFileUpload = async (file: File) => {
-    const formData = new FormData();
-    formData.append('file', file);
+    // Validasi ukuran berkas maksimal 50 MB
+    const MAX_FILE_SIZE = 50 * 1024 * 1024;
+    if (file.size > MAX_FILE_SIZE) {
+      const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
+      setFeedback({
+        type: 'error',
+        text: `Ukuran berkas (${sizeMb} MB) melebihi batas maksimal 50 MB.`,
+      });
+      return;
+    }
+
     setUploadingImage(true);
     setFeedback(null);
 
     try {
-      const res = await fetch('/api/admin/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await res.json();
-      if (res.ok && data.url) {
+      const data = await uploadFileWithProgress(file);
+      if (data && data.url) {
         setEditingItem((prev) => (prev ? { ...prev, image_url: data.url } : null));
         setFeedback({ type: 'success', text: 'Foto dokumentasi proyek berhasil diunggah!' });
-      } else {
-        setFeedback({ type: 'error', text: data.error || 'Gagal mengunggah foto.' });
       }
-    } catch {
-      setFeedback({ type: 'error', text: 'Terjadi kesalahan jaringan saat mengunggah foto.' });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Terjadi kesalahan saat mengunggah foto.';
+      setFeedback({ type: 'error', text: msg });
     } finally {
       setUploadingImage(false);
     }

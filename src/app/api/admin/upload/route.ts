@@ -16,6 +16,72 @@ export async function POST(request: Request) {
   }
 
   try {
+    const contentType = request.headers.get('content-type') || '';
+
+    // Direct Pre-Signed URL Generator for large files (bypasses Vercel Serverless 4.5MB request limit)
+    if (contentType.includes('application/json')) {
+      const body = await request.json();
+      if (body.action === 'get-signed-url') {
+        const fileSize = Number(body.fileSize || 0);
+        if (fileSize > MAX_FILE_SIZE) {
+          const sizeMb = (fileSize / (1024 * 1024)).toFixed(1);
+          return NextResponse.json(
+            { error: `Ukuran berkas (${sizeMb} MB) melebihi batas maksimal 50 MB.` },
+            { status: 400 }
+          );
+        }
+
+        if (isSupabaseConfigured()) {
+          const client = getAdminSupabase();
+          if (client) {
+            const bucketName = 'portfolio';
+            const cleanName = (body.fileName || 'file').replace(/[^a-zA-Z0-9.-]/g, '_');
+            const fileName = `${Date.now()}_${cleanName}`;
+
+            let { data, error } = await client.storage
+              .from(bucketName)
+              .createSignedUploadUrl(fileName);
+
+            if (error && error.message?.toLowerCase().includes('bucket not found')) {
+              try {
+                await client.storage.createBucket(bucketName, {
+                  public: true,
+                  fileSizeLimit: MAX_FILE_SIZE,
+                });
+                const retry = await client.storage
+                  .from(bucketName)
+                  .createSignedUploadUrl(fileName);
+                data = retry.data;
+                error = retry.error;
+              } catch (createErr) {
+                console.warn('Failed to auto-create bucket for signed url:', createErr);
+              }
+            }
+
+            if (!error && data?.signedUrl) {
+              const { data: publicData } = client.storage
+                .from(bucketName)
+                .getPublicUrl(fileName);
+
+              return NextResponse.json({
+                success: true,
+                directUpload: true,
+                signedUrl: data.signedUrl,
+                path: data.path,
+                token: data.token,
+                publicUrl: publicData.publicUrl,
+                fileName,
+              });
+            } else if (error) {
+              console.warn('createSignedUploadUrl error:', error);
+            }
+          }
+        }
+
+        return NextResponse.json({ directUpload: false });
+      }
+    }
+
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
 
