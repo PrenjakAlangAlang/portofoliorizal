@@ -7,10 +7,10 @@ Website portofolio profesional untuk Geologis dan Spesialis Eksplorasi & Pemodel
 ## 🌟 Fitur Utama
 
 1. **Frontend Portofolio Berpresisi Tinggi:**
-   - **Profil & Identitas Geologis:** Bio, spesialisasi, status ketersediaan, almamater, sertifikasi utama, nomor anggota IAGI, dan foto profil.
-   - **Pengalaman Kerja (Career Stratigraphy):** Riwayat karir terstruktur dengan tag kompetensi (Core Logging, Hydrothermal Alteration, Leapfrog 3D, dsb).
+   - **Profil & Identitas Geologis:** Bio, spesialisasi, status ketersediaan, almamater, sertifikasi utama, IPK, dan foto profil.
+   - **Pengalaman Kerja (Career Stratigraphy):** Riwayat karir terstruktur dengan tag kompetensi.
    - **Pengalaman Proyek (Field Portfolio):** Dokumentasi foto lapangan, lokasi cekungan geologi, durasi survei, deskripsi metodologi, dan deliverable spesifik.
-   - **Sertifikasi & Pelatihan:** Lisensi operasional (POP Minerba ESDM, HUET Sea Survival, Leapfrog Geo, ArcGIS Mining, Petrografi, Wellsite).
+   - **Sertifikasi & Pelatihan:** Lisensi operasional.
    - **Keahlian Teknis Terkategori:** Geologi Lapangan, Software & GIS, Laboratorium, serta Kepatuhan & Standar K3 (JORC/KCMI).
    - **Hubungi Saya & Formulir Pesan Interaktif:** Calon klien dapat mengirim pesan langsung dari website yang langsung masuk ke dashboard admin, serta tombol WhatsApp dan Email langsung.
    - **Footer Berisi Datum & Koordinat Geologi:** Menampilkan datum `WGS 84 / UTM ZONE 49S` dan tautan LinkedIn, ResearchGate, dan GitHub.
@@ -28,7 +28,6 @@ Website portofolio profesional untuk Geologis dan Spesialis Eksplorasi & Pemodel
 3. **URL Khusus Login Admin (Secret Portal):**
    - Akses `/admin` diproteksi secara ketat. Pengunjung umum yang mencoba membuka `/admin` akan langsung dialihkan ke halaman utama tanpa membocorkan halaman login.
    - Login admin menggunakan URL khusus: `/portal-admin-geolog` (dapat diubah sesuai keinginan di `.env.local` melalui variabel `NEXT_PUBLIC_ADMIN_SECRET_PATH`).
-   - Masuk menggunakan passkey rahasia (bawaan: `geolog2026`).
 
 4. **Dual-Mode Data (Online Supabase & Offline Fallback):**
    - **Bila Supabase sudah terhubung:** Data disimpan dan dibaca langsung dari database PostgreSQL Supabase secara realtime.
@@ -88,10 +87,7 @@ geologist-portfolio/
    npm run dev
    ```
 
-3. Buka browser:
-   - **Website Portofolio:** [http://localhost:3000](http://localhost:3000)
-   - **URL Khusus Login Admin:** [http://localhost:3000/portal-admin-geolog](http://localhost:3000/portal-admin-geolog)
-   - Masukkan Passkey: `geolog2026`
+
 
 ---
 
@@ -115,35 +111,3 @@ geologist-portfolio/
 
 ---
 
-## ☁️ Panduan Hosting ke Vercel
-
-1. **Inisialisasi Git dan Push ke GitHub:**
-   ```bash
-   git init
-   git add .
-   git commit -m "feat: geologist portfolio with nextjs, supabase and secret admin"
-   git branch -M main
-   git remote add origin https://github.com/USERNAME/geologist-portfolio.git
-   git push -u origin main
-   ```
-
-2. **Deploy di Vercel:**
-   - Buka [https://vercel.com](https://vercel.com) dan login.
-   - Klik **"Add New..."** > **"Project"**.
-   - Import repository `geologist-portfolio` dari akun GitHub Anda.
-   - Di bagian **Environment Variables**, tambahkan:
-     - `NEXT_PUBLIC_SUPABASE_URL` = URL Supabase Anda
-     - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = Anon Public Key Supabase
-     - `ADMIN_PASSWORD` = Kata sandi admin yang Anda inginkan (misal: `RahasiaGeolog2026!`)
-     - `NEXT_PUBLIC_ADMIN_SECRET_PATH` = `/portal-admin-geolog` (atau path unik lainnya)
-   - Klik **Deploy**.
-
-Website portofolio Anda langsung live dengan performa kilat, CDN global, HTTPS otomatis, dan database PostgreSQL cloud gratis dari Supabase!
-
----
-
-## 🔐 Keamanan URL Khusus Admin
-
-- Path `/admin` terlindungi guard server-side.
-- Halaman login sengaja diletakkan pada URL rahasia (default: `/portal-admin-geolog`) sehingga orang luar tidak mengetahui lokasi pintu masuk admin.
-- Anda dapat mengubah URL ini kapan saja cukup dengan mengganti nilai `NEXT_PUBLIC_ADMIN_SECRET_PATH` pada file `.env` tanpa perlu mengubah kode sumber.
