@@ -13,7 +13,6 @@ Website portofolio profesional untuk Geologis dan Spesialis Eksplorasi & Pemodel
    - **Sertifikasi & Pelatihan:** Lisensi operasional.
    - **Keahlian Teknis Terkategori:** Geologi Lapangan, Software & GIS, Laboratorium, serta Kepatuhan & Standar K3 (JORC/KCMI).
    - **Hubungi Saya & Formulir Pesan Interaktif:** Calon klien dapat mengirim pesan langsung dari website yang langsung masuk ke dashboard admin, serta tombol WhatsApp dan Email langsung.
-   - **Footer Berisi Datum & Koordinat Geologi:** Menampilkan datum `WGS 84 / UTM ZONE 49S` dan tautan LinkedIn, ResearchGate, dan GitHub.
    - **Bilingual Switcher (ID | EN) & Unduh CV PDF.**
 
 2. **Dashboard Admin Mandiri (`/admin`):**
